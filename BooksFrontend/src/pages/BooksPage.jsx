@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import BookList from "../components/BookList";
 import CommentsSection from "../components/CommentsSection";
 import Cart from "../components/Cart";
 import { getBooks, placeOrder } from "../api/api";
 import AuthModal from "../components/AuthModal";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 function BooksPage() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [cartItems, setCartItems] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   //15
   const [cookieUsername, setCookieUsername] = useState("");
@@ -21,6 +21,15 @@ function BooksPage() {
   const [orderSuccess, setOrderSuccess] = useState(false); // 👈 Для уведомления о заказе
   const [authOpen, setAuthOpen] = useState(false);
   const { user, logout, openAuth, isAuthOpen, closeAuth } = useAuth();
+  const {
+    items: cartItems,
+    addToCart: addCartItem,
+    increase,
+    decrease,
+    clearCart,
+    totalCount,
+    totalPrice,
+  } = useCart();
   
   
   //15
@@ -149,63 +158,16 @@ function BooksPage() {
 
   // Добавить книгу в корзину
   const addToCart = (book) => {
-    // 👇 Находим актуальную книгу с текущим stock
-    const currentBook = books.find(b => b.id === book.id);
-    if (!currentBook || !currentBook.available) return;
-
-    setCartItems(prev => {
-      const existing = prev.find(item => item.bookId === book.id);
-      const currentQty = existing ? existing.quantity : 0;
-      
-      // Проверяем, не превышаем ли stock
-      if (currentQty + 1 > currentBook.stock) return prev;
-      
-      if (existing) {
-        return prev.map(item =>
-          item.bookId === book.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        if (currentBook.stock < 1) return prev;
-        return [...prev, { 
-          bookId: book.id, 
-          title: book.title, 
-          author: book.author, 
-          price: book.price, 
-          quantity: 1, 
-          stock: currentBook.stock,
-          image: `https://localhost:7149${book.imageUrl}`
-        }];
-      }
-    });
+    addCartItem(book);
   };
 
   const increaseCartItem = (item) => {
-    const currentBook = books.find(b => b.id === item.bookId);
-    setCartItems(prev =>
-      prev.map(i =>
-        i.bookId === item.bookId && i.quantity < currentBook.stock
-          ? { ...i, quantity: i.quantity + 1 }
-          : i
-      )
-    );
+    increase(item);
   };
 
-  // Уменьшить количество книги
   const removeFromCart = (bookId) => {
-    setCartItems(prev => prev
-      .map(item => item.bookId === bookId ? { ...item, quantity: item.quantity - 1 } : item)
-      .filter(item => item.quantity > 0)
-    );
+    decrease(bookId);
   };
-
-  const totalCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-  // Очистить корзину
-  const clearCart = () => setCartItems([]);
-
   useEffect(() => {
     const fetchData = async () => {
       const data = await getBooks();
