@@ -9,4 +9,8 @@ public class User
     public string Role { get; set; } = "User";
     [Required]
     public string PasswordHash { get; set; } = string.Empty;
+
+    public List<Comment> Comments { get; set; } = new();
+
+    public List<Order> Orders { get; set; } = new();
 }

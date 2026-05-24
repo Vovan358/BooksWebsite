@@ -1,16 +1,45 @@
 import request from "./client";
 
-const API_URL = "https://localhost:7149/api";
+const BASE_URL = "https://localhost:7149/api";
 
-export const getBooks = async () => {
-  const res = await fetch(`${API_URL}/book`);
-  return res.json();
-};
+async function publicRequest(url, options = {}) {
+  const response = await fetch(BASE_URL + url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+  });
 
-export const getComments = async (bookId) => {
-  const res = await fetch(`${API_URL}/comment/book/${bookId}`);
-  return res.json();
-};
+  const text = await response.text();
+
+  if (!response.ok) {
+    throw new Error(text || "Request failed");
+  }
+
+  return text ? JSON.parse(text) : null;
+}
+
+function toQuery(params) {
+  const query = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      query.set(key, value);
+    }
+  });
+
+  const value = query.toString();
+  return value ? `?${value}` : "";
+}
+
+// Books
+export const getBooks = () => request("/book");
+
+export const getBook = (id) => request(`/book/${id}`);
+
+// Comments
+export const getComments = (bookId) => request(`/comment/book/${bookId}`);
 
 export const addComment = (comment) =>
   request("/comment", {
@@ -18,48 +47,40 @@ export const addComment = (comment) =>
     body: JSON.stringify(comment),
   });
 
-export const placeOrder = (items) =>
-  request("/book/order", {
+// Auth
+export const loginRequest = (username, password) =>
+  publicRequest("/auth/login", {
     method: "POST",
-    body: JSON.stringify(items),
-  });
-
-
-const BASE_URL = "https://localhost:7149/api";
-
-export const loginRequest = async (username, password) => {
-  const res = await fetch("https://localhost:7149/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
 
-  const text = await res.text(); // 👈 ВСЕГДА читаем текст
-
-  if (!res.ok) {
-    throw new Error(text || "Invalid credentials");
-  }
-
-  return JSON.parse(text);
-};
-
-export async function registerRequest(username, password) {
-  const res = await fetch(`${BASE_URL}/auth/register`, {
+export const registerRequest = (username, password) =>
+  publicRequest("/auth/register", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({
       username,
       passwordHash: password,
     }),
   });
 
-  if (!res.ok) {
-    const error = await res.text();
-    throw new Error(error);
-  }
+// Orders
+export const createOrder = (items) =>
+  request("/order", {
+    method: "POST",
+    body: JSON.stringify({ items }),
+  });
 
-  return res.json();
-}
+export const getMyOrders = () => request("/order/my");
 
+// Backward compatibility for the current Cart component.
+export const placeOrder = createOrder;
+
+// Leaderboard
+export const getLeaderboard = (
+  sortBy = "booksBought",
+  page = 1,
+  pageSize = 10
+) => request(`/leaderboard${toQuery({ sortBy, page, pageSize })}`);
+
+// User
+export const getMyStats = () => request("/user/me/stats");

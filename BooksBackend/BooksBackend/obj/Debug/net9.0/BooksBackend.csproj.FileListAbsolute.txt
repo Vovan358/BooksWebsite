@@ -158,7 +158,6 @@ C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\BooksBac.FC3D8CD4.Up2Date
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\BooksBackend.dll
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\refint\BooksBackend.dll
@@ -181,3 +180,5 @@ C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\bin\Debug\net9.0\System.Diagnostics.DiagnosticSource.dll
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\bin\Debug\net9.0\Prometheus.NetStandard.dll
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\bin\Debug\net9.0\Prometheus.AspNetCore.dll
+C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\BooksBackend.sourcelink.json
+C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

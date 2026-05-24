@@ -5,9 +5,9 @@ public class Book
     public int Id { get; set; }
 
     [Required]
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
-    public string Author { get; set; }
+    public string Author { get; set; } = string.Empty;
 
     public bool Available { get; set; }
 
@@ -15,7 +15,12 @@ public class Book
 
     public int Stock { get; set; }
 
+    public string Description { get; set; } = "";
+
+    public string ImageUrl { get; set; } = "";
+
     // Связь с комментариями
     public List<Comment> Comments { get; set; } = new();
-    public string ImageUrl { get; set; } = "";
+
+    public List<OrderItem> OrderItems { get; set; } = new();
 }

@@ -153,22 +153,6 @@
   },
   {
     "ContainingType": "BookController",
-    "Method": "PlaceOrder",
-    "RelativePath": "api/Book/order",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "items",
-        "Type": "System.Collections.Generic.List\u00601[[OrderItemDto, BooksBackend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "BookController",
     "Method": "GetAllRedis",
     "RelativePath": "api/Book/redis",
     "HttpMethod": "GET",
@@ -226,6 +210,58 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "LeaderboardController",
+    "Method": "Get",
+    "RelativePath": "api/Leaderboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "sortBy",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OrderController",
+    "Method": "Create",
+    "RelativePath": "api/Order",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "CreateOrderDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OrderController",
+    "Method": "GetMyOrders",
+    "RelativePath": "api/Order/my",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SecureController",
     "Method": "AdminOnly",
     "RelativePath": "api/Secure/admin",
@@ -249,6 +285,16 @@
     "ContainingType": "SecureController",
     "Method": "UserOnly",
     "RelativePath": "api/Secure/user",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "UserController",
+    "Method": "GetMyStats",
+    "RelativePath": "api/User/me/stats",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Prometheus;
 using StackExchange.Redis;
 using System.Text.Json;
-using Prometheus;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -16,20 +16,6 @@ public class BookController : ControllerBase
     private readonly IMemoryCache _cache; // 17
     private readonly IDistributedCache _redis; // 17
     private const string BooksCacheKey = "books_cache";
-
-    private static readonly Counter BooksRequestsCounter =
-    Metrics.CreateCounter("books_requests_total", "Total number of GET /books requests");
-
-    private static readonly Counter OrdersCounter =
-        Metrics.CreateCounter("orders_total", "Total number of orders placed");
-
-    private static readonly Gauge BooksInStockGauge =
-        Metrics.CreateGauge("books_stock_total", "Current total stock of all books");
-
-    private static readonly Histogram GetBooksDuration =
-        Metrics.CreateHistogram(
-            "get_books_duration_seconds",
-            "Time spent fetching books");
     public BookController(AppDbContext context, IMemoryCache cache, IDistributedCache redisCache)
     {
         _context = context;
@@ -41,21 +27,22 @@ public class BookController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        using (GetBooksDuration.NewTimer())
+        using (AppMetrics.GetBooksDuration.NewTimer())
         {
-            BooksRequestsCounter.Inc(); //18
+            AppMetrics.BooksRequestsCounter.Inc(); //18
             var cached = await _redis.GetStringAsync(BooksCacheKey);
 
             if (cached != null)
             {
                 Console.WriteLine("🔥 REDIS CACHE HIT");
-                var booksFromCache = JsonSerializer.Deserialize<List<Book>>(cached);
+                var booksFromCache = JsonSerializer.Deserialize<List<BookResponseDto>>(cached);
                 return Ok(booksFromCache);
             }
 
             Console.WriteLine("❄ REDIS CACHE MISS");
 
-            var books = await _context.Books.ToListAsync();
+            var books = await BuildBooksQuery()
+                .ToListAsync();
 
             var serialized = JsonSerializer.Serialize(books);
 
@@ -77,7 +64,9 @@ public class BookController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        var book = await _context.Books.FindAsync(id);
+        var book = await BuildBooksQuery()
+            .FirstOrDefaultAsync(b => b.Id == id);
+
         if (book == null) return NotFound();
 
         return Ok(book);
@@ -93,48 +82,6 @@ public class BookController : ControllerBase
         await _redis.RemoveAsync(BooksCacheKey);
         Console.WriteLine("🧹 Redis cache cleared after delete");
         return Ok(book);
-    }
-
-    [Authorize]
-    [HttpPost("order")]
-    public async Task<IActionResult> PlaceOrder([FromBody] List<OrderItemDto> items)
-    {
-        OrdersCounter.Inc(); //18
-        Console.WriteLine($"ORDER HIT: {items?.Count}");
-
-        var bookIds = items.Select(i => i.BookId).ToList();
-
-        var books = await _context.Books
-            .Where(b => bookIds.Contains(b.Id))
-            .ToListAsync();
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        foreach (var item in items)
-        {
-            var book = books.FirstOrDefault(b => b.Id == item.BookId);
-            if (book == null) continue;
-
-            if (book.Stock >= item.Quantity)
-            {
-                book.Stock -= item.Quantity;
-
-                if (book.Stock == 0)
-                    book.Available = false;
-            }
-            else
-            {
-                return BadRequest($"Not enough stock for book {book.Id}");
-            }
-        }
-        if (!ModelState.IsValid)
-    return BadRequest(ModelState);
-        await _context.SaveChangesAsync();
-        await _redis.RemoveAsync(BooksCacheKey);
-        Console.WriteLine("🧹 Redis cache cleared after order");
-        await UpdateStockGauge();
-        return Ok();
     }
 
     [HttpDelete("{id}")]
@@ -187,6 +134,26 @@ public class BookController : ControllerBase
     private async Task UpdateStockGauge()
     {
         var totalStock = await _context.Books.SumAsync(b => b.Stock);
-        BooksInStockGauge.Set(totalStock);
+        AppMetrics.BooksInStockGauge.Set(totalStock);
+    }
+
+    private IQueryable<BookResponseDto> BuildBooksQuery()
+    {
+        return _context.Books
+            .Select(b => new BookResponseDto
+            {
+                Id = b.Id,
+                Title = b.Title,
+                Author = b.Author,
+                Available = b.Available,
+                Price = b.Price,
+                Stock = b.Stock,
+                Description = b.Description,
+                ImageUrl = b.ImageUrl,
+                CommentsNumber = b.Comments.Count,
+                AverageRating = b.Comments.Count == 0
+                    ? 0
+                    : b.Comments.Average(c => c.Rating)
+            });
     }
 }

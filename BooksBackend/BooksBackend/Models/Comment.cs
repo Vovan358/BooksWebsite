@@ -6,6 +6,8 @@ public class Comment
 
     public int BookId { get; set; }
 
+    public int? UserId { get; set; }
+
     public string Author { get; set; } = string.Empty;
 
     public string Text { get; set; } = string.Empty;
@@ -16,4 +18,7 @@ public class Comment
 
     [JsonIgnore] // 🔥 важно
     public Book? Book { get; set; }
+
+    [JsonIgnore]
+    public User? User { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -27,11 +28,22 @@ public class CommentController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(Comment comment)
     {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var username = User.FindFirstValue(ClaimTypes.Name);
+
+        if (!int.TryParse(userIdValue, out var userId) || string.IsNullOrEmpty(username))
+            return Unauthorized("Invalid token");
+
         // 🔥 защита от фронта
         comment.Id = 0;
+        comment.UserId = userId;
+        comment.Author = username;
 
         // 🔥 ставим дату на сервере
         comment.CreatedAt = DateTime.UtcNow;
+
+        if (comment.Rating < 0 || comment.Rating > 10)
+            return BadRequest("Rating must be between 0 and 10");
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
