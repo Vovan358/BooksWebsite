@@ -1,9 +1,7 @@
 ﻿import { useEffect, useState } from "react";
 import BookList from "../components/BookList";
 import CommentsSection from "../components/CommentsSection";
-import Cart from "../components/Cart";
 import { getBooks, placeOrder } from "../api/api";
-import AuthModal from "../components/AuthModal";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
@@ -20,7 +18,7 @@ function BooksPage() {
   //15
   const [orderSuccess, setOrderSuccess] = useState(false); // 👈 Для уведомления о заказе
   const [authOpen, setAuthOpen] = useState(false);
-  const { user, logout, openAuth, isAuthOpen, closeAuth } = useAuth();
+  const { user } = useAuth();
   const {
     items: cartItems,
     addToCart: addCartItem,
@@ -238,69 +236,6 @@ function BooksPage() {
         />
       )}
 
-      <div style={{ position: "fixed", top: "20px", left: "20px", zIndex: 300,
-        marginTop:"40px",
-         }}>
-        {!user ? (
-          <button style={{background: "#43a047",
-        color: "white"}}
-        onClick={openAuth}>
-            Войти в аккаунт
-          </button>
-        ) : (
-          <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        gap: "6px",
-        padding: "8px 10px",
-        background: "#262431",
-        borderRadius: "8px",
-        color: "#fff",
-      }}
-    >
-      <span style={{ fontSize: "14px" }}>👤 {user}</span>
-
-      <button
-        onClick={logout}
-        style={{
-          background: "#ff0800",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          padding: "6px 10px",
-          cursor: "pointer",
-          fontSize: "12px",
-        }}
-      >
-        Выйти из аккаунта
-      </button>
-    </div>
-        )}
-      </div>
-
-      <button
-        onClick={() => setCartOpen(prev => !prev)}
-        style={{ 
-          position: "fixed", 
-          top: "20px", 
-          left: "20px", 
-          zIndex: 200,
-          background: "#fcaa2f",
-          color: "#212121ff"
-         }}
-         
-        onMouseEnter={e => e.currentTarget.style.background = "#ff9800"}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = "#fcaa2f";
-          e.currentTarget.style.transform = "scale(1)";
-        }}
-        onMouseDown={e => e.currentTarget.style.transform = "scale(0.9)"}
-        onMouseUp={e => e.currentTarget.style.transform = "scale(1)"}>
-        🛒 Корзина ({totalCount})
-      </button>
-
       {/* Уведомление об успешном заказе */}
       {orderSuccess && (
         <div style={{
@@ -325,24 +260,7 @@ function BooksPage() {
       {/* Комментарии */}
       {selectedBook && (
         <CommentsSection book={selectedBook} />
-      )}
-
-      {/* 👇 Передаём placeOrder в Cart */}
-      <Cart
-        items={cartItems}
-        onAdd={increaseCartItem}
-        onRemove={removeFromCart}
-        onClear={clearCart}
-        onPlaceOrder={handlePlaceOrder}
-        open={cartOpen}
-        onClose={() => setCartOpen(false)}
-      />
-
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={closeAuth}
-      />
-      <div style={{ marginTop: "40px", padding: "10px", background: "#222", color: "white" }}>
+      )}<div style={{ marginTop: "40px", padding: "10px", background: "#222", color: "white" }}>
         <h3>Storage Demo</h3>
 
         <p>Cookie username: {cookieUsername}</p>

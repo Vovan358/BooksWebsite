@@ -65,7 +65,7 @@ public class AuthController : ControllerBase
         if (user == null)
             return Unauthorized("Invalid username or password");
 
-        if (string.IsNullOrEmpty(user.Role))
+        if (string.IsNullOrEmpty(user.Role)) 
             user.Role = "User";
             var result = _hasher.VerifyHashedPassword(
                 user,
