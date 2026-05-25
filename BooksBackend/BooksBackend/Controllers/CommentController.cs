@@ -54,6 +54,7 @@ public class CommentController : ControllerBase
         return Ok(comment);
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -61,6 +62,18 @@ public class CommentController : ControllerBase
 
         if (comment == null)
             return NotFound();
+
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var isAdmin = User.IsInRole("Admin");
+
+        if (!isAdmin)
+        {
+            if (!int.TryParse(userIdValue, out var userId))
+                return Unauthorized("Invalid token");
+
+            if (comment.UserId != userId)
+                return Forbid();
+        }
 
         _context.Comments.Remove(comment);
         await _context.SaveChangesAsync();

@@ -1,9 +1,30 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getBooks } from "../api/api";
 import { useCart } from "../context/CartContext";
 
 function CartPage() {
-  const { items, increase, decrease, removeFromCart, clearCart, totalPrice } =
-    useCart();
+  const {
+    items,
+    increase,
+    decrease,
+    removeFromCart,
+    clearCart,
+    syncWithBooks,
+    totalPrice,
+  } = useCart();
+  const [syncNotice, setSyncNotice] = useState("");
+
+  useEffect(() => {
+    const syncCart = async () => {
+      const books = await getBooks();
+      syncWithBooks(books, () => {
+        setSyncNotice("Корзина обновлена по актуальным данным.");
+      });
+    };
+
+    syncCart();
+  }, [syncWithBooks]);
 
   return (
     <main className="page-shell">
@@ -13,6 +34,8 @@ function CartPage() {
           <p className="page-subtitle">Проверьте товары перед оформлением.</p>
         </div>
       </div>
+
+      {syncNotice && <div className="notice">{syncNotice}</div>}
 
       {items.length === 0 ? (
         <div className="empty-state">Корзина пуста.</div>

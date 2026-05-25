@@ -1,15 +1,27 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { createOrder } from "../api/api";
+import { createOrder, getBooks } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
 function CheckoutPage() {
   const navigate = useNavigate();
-  const { user, openAuth } = useAuth();
-  const { items, totalCount, totalPrice, clearCart } = useCart();
+  const { user } = useAuth();
+  const { items, totalCount, totalPrice, clearCart, syncWithBooks } = useCart();
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [syncNotice, setSyncNotice] = useState("");
+
+  useEffect(() => {
+    const syncCart = async () => {
+      const books = await getBooks();
+      syncWithBooks(books, () => {
+        setSyncNotice("Корзина обновлена по актуальным данным.");
+      });
+    };
+
+    syncCart();
+  }, [syncWithBooks]);
 
   useEffect(() => {
     if (!success) return;
@@ -25,7 +37,7 @@ function CheckoutPage() {
     setError("");
 
     if (!user) {
-      openAuth();
+      navigate("/auth", { state: { from: "/checkout" } });
       return;
     }
 
@@ -57,6 +69,7 @@ function CheckoutPage() {
 
       {success && <div className="notice">Заказ оформлен!</div>}
       {error && <div className="notice">{error}</div>}
+      {syncNotice && <div className="notice">{syncNotice}</div>}
 
       <section className="panel">
         <h2>Сводка о заказе</h2>

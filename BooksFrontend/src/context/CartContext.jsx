@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 const CartContext = createContext(null);
 const CART_STORAGE_KEY = "booksWebsiteCart";
@@ -31,7 +31,7 @@ export function CartProvider({ children }) {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  const addToCart = (book, amount = 1) => {
+  const addToCart = useCallback((book, amount = 1) => {
     if (!book?.available || book.stock < 1 || amount < 1) return;
 
     setItems((prev) => {
@@ -56,13 +56,13 @@ export function CartProvider({ children }) {
 
       return [...prev, toCartItem(book, nextQuantity)];
     });
-  };
+  }, []);
 
-  const removeFromCart = (bookId) => {
+  const removeFromCart = useCallback((bookId) => {
     setItems((prev) => prev.filter((item) => item.bookId !== bookId));
-  };
+  }, []);
 
-  const increase = (bookOrItem) => {
+  const increase = useCallback((bookOrItem) => {
     const bookId = bookOrItem.bookId ?? bookOrItem.id;
 
     setItems((prev) =>
@@ -72,9 +72,9 @@ export function CartProvider({ children }) {
           : item
       )
     );
-  };
+  }, []);
 
-  const decrease = (bookId) => {
+  const decrease = useCallback((bookId) => {
     setItems((prev) =>
       prev
         .map((item) =>
@@ -84,9 +84,59 @@ export function CartProvider({ children }) {
         )
         .filter((item) => item.quantity > 0)
     );
-  };
+  }, []);
 
-  const clearCart = () => setItems([]);
+  const clearCart = useCallback(() => setItems([]), []);
+
+  const syncWithBooks = useCallback((books, onChanged) => {
+    let wasChanged = false;
+
+    setItems((prev) => {
+      let changed = false;
+      const next = prev
+        .map((item) => {
+          const book = books.find((candidate) => candidate.id === item.bookId);
+
+          if (!book || !book.available || book.stock < 1) {
+            changed = true;
+            return null;
+          }
+
+          const quantity = Math.min(item.quantity, book.stock);
+          const updated = {
+            ...item,
+            title: book.title,
+            author: book.author,
+            price: book.price,
+            stock: book.stock,
+            image: book.image || `https://localhost:7149${book.imageUrl}`,
+            quantity,
+          };
+
+          if (
+            updated.title !== item.title ||
+            updated.author !== item.author ||
+            updated.price !== item.price ||
+            updated.stock !== item.stock ||
+            updated.image !== item.image ||
+            updated.quantity !== item.quantity
+          ) {
+            changed = true;
+          }
+
+          return updated;
+        })
+        .filter(Boolean);
+
+      wasChanged = changed;
+
+      return next;
+    });
+
+    setTimeout(() => {
+      if (wasChanged) onChanged?.();
+    }, 0);
+  }, []);
 
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
@@ -102,10 +152,21 @@ export function CartProvider({ children }) {
       increase,
       decrease,
       clearCart,
+      syncWithBooks,
       totalCount,
       totalPrice,
     }),
-    [items, totalCount, totalPrice]
+    [
+      items,
+      addToCart,
+      removeFromCart,
+      increase,
+      decrease,
+      clearCart,
+      syncWithBooks,
+      totalCount,
+      totalPrice,
+    ]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -73,7 +73,7 @@ public class BookController : ControllerBase
     }
 
     // ➕ POST создать книгу (для тестов)
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(Book book)
     {
@@ -84,6 +84,7 @@ public class BookController : ControllerBase
         return Ok(book);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

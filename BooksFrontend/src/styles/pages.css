@@ -369,6 +369,54 @@
   margin-bottom: 18px;
 }
 
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.auth-modal {
+  width: min(440px, 100%);
+  border: 1px solid #343642;
+  border-radius: 8px;
+  background: #22232d;
+  padding: 24px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+}
+
+.auth-page {
+  display: grid;
+  place-items: center;
+  min-height: 520px;
+}
+
+.auth-page-panel {
+  width: min(560px, 100%);
+}
+
+.auth-form {
+  display: grid;
+  gap: 14px;
+}
+
+.auth-form h1 {
+  margin: 0;
+  font-size: 34px;
+  letter-spacing: 0;
+}
+
+.auth-form-page {
+  gap: 18px;
+}
+
+.auth-error {
+  color: #ff8a80;
+}
+
 @media (max-width: 900px) {
   .book-grid,
   .book-detail,

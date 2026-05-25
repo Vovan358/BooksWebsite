@@ -1,7 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AuthRedirectHandler from "./components/AuthRedirectHandler";
 import AuthModal from "./components/AuthModal";
 import Layout from "./components/Layout";
 import { useAuth } from "./context/AuthContext";
+import AuthPage from "./pages/AuthPage";
 import BookPage from "./pages/BookPage";
 import CartPage from "./pages/CartPage";
 import CataloguePage from "./pages/CataloguePage";
@@ -15,9 +17,11 @@ function App() {
 
   return (
     <BrowserRouter>
+      <AuthRedirectHandler />
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<MainPage />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/catalogue" element={<CataloguePage />} />
           <Route path="/books/:id" element={<BookPage />} />
           <Route path="/cart" element={<CartPage />} />

@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|c:\\users\\vovan358\\desktop\\\u0432\u0441\u0451\\programs\\bookswebsite\\booksbackend\\booksbackend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|solutionrelative:booksbackend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|c:\\users\\vovan358\\desktop\\\u0432\u0441\u0451\\programs\\bookswebsite\\booksbackend\\booksbackend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|solutionrelative:booksbackend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,10 +17,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|c:\\users\\vovan358\\desktop\\\u0432\u0441\u0451\\programs\\bookswebsite\\booksbackend\\booksbackend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|solutionrelative:booksbackend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|c:\\users\\vovan358\\desktop\\\u0432\u0441\u0451\\programs\\bookswebsite\\booksbackend\\booksbackend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|solutionrelative:booksbackend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|c:\\users\\vovan358\\desktop\\\u0432\u0441\u0451\\programs\\bookswebsite\\booksbackend\\booksbackend\\models\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -70,11 +70,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 11,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "OrderController.cs",
               "DocumentMoniker": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\Controllers\\OrderController.cs",
               "RelativeDocumentMoniker": "BooksBackend\\Controllers\\OrderController.cs",
@@ -82,8 +82,7 @@
               "RelativeToolTip": "BooksBackend\\Controllers\\OrderController.cs",
               "ViewState": "AgIAAI0AAAAAAAAAAAAAAJkAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-24T18:12:52.492Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-24T18:12:52.492Z"
             },
             {
               "$type": "Document",
@@ -107,8 +106,7 @@
               "RelativeToolTip": "BooksBackend\\Controllers\\SecureController.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAqwBoAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-17T18:50:09.074Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-17T18:50:09.074Z"
             },
             {
               "$type": "Document",
@@ -132,8 +130,7 @@
               "RelativeToolTip": "BooksBackend\\Data\\AppDbContext.cs",
               "ViewState": "AgIAABYAAAAAAAAAAAAAwCwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-16T22:23:13.247Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-16T22:23:13.247Z"
             },
             {
               "$type": "Document",
@@ -145,8 +142,7 @@
               "RelativeToolTip": "BooksBackend\\DTOs\\OrderItemDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-16T22:22:40.735Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-16T22:22:40.735Z"
             },
             {
               "$type": "Document",
@@ -158,8 +154,7 @@
               "RelativeToolTip": "BooksBackend\\Models\\Book.cs",
               "ViewState": "AgIAAAoAAAAAAAAAAAAUwBoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-16T22:22:17.367Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-16T22:22:17.367Z"
             },
             {
               "$type": "Document",
@@ -171,8 +166,7 @@
               "RelativeToolTip": "BooksBackend\\Models\\Comment.cs",
               "ViewState": "AgIAAAgAAAAAAAAAAAAUwBgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-16T22:22:03.647Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-16T22:22:03.647Z"
             },
             {
               "$type": "Document",
@@ -184,8 +178,7 @@
               "RelativeToolTip": "BooksBackend\\DTOs\\LoginDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-16T20:59:33.714Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-16T20:59:33.714Z"
             },
             {
               "$type": "Document",
@@ -201,20 +194,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "BooksBackend\\Controllers\\AuthController.cs",
               "ToolTip": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\Controllers\\AuthController.cs",
               "RelativeToolTip": "BooksBackend\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAADsAAAAAAAAAAIAwwEoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADsAAAAAAAAAAIA/wEoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-16T17:03:39.3Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "User.cs",
               "DocumentMoniker": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\Models\\User.cs",
               "RelativeDocumentMoniker": "BooksBackend\\Models\\User.cs",
@@ -235,8 +228,7 @@
               "RelativeToolTip": "BooksBackend\\Controllers\\CommentController.cs",
               "ViewState": "AgIAADEAAAAAAAAAAAAAAEYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-13T13:15:52.508Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T13:15:52.508Z"
             },
             {
               "$type": "Document",
@@ -248,12 +240,11 @@
               "RelativeToolTip": "BooksBackend\\Controllers\\BookController.cs",
               "ViewState": "AgIAAIoAAAAAAAAAAADwv58AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-13T13:14:45.212Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T13:14:45.212Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\Program.cs",
               "RelativeDocumentMoniker": "BooksBackend\\Program.cs",
@@ -261,8 +252,7 @@
               "RelativeToolTip": "BooksBackend\\Program.cs",
               "ViewState": "AgIAAI0AAAAAAAAAAAAIwJ0AAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-12T20:20:24.593Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-12T20:20:24.593Z"
             }
           ]
         }
