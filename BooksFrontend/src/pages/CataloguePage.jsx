@@ -9,6 +9,7 @@ function CataloguePage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name");
+  const [sortDirection, setSortDirection] = useState("asc");
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -23,11 +24,11 @@ function CataloguePage() {
 
   useEffect(() => {
     setPage(1);
-  }, [search, sortBy]);
+  }, [search, sortBy, sortDirection]);
 
   const visibleBooks = useMemo(() => {
-    return sortBooks(filterBooks(books, search), sortBy);
-  }, [books, search, sortBy]);
+    return sortBooks(filterBooks(books, search), sortBy, sortDirection);
+  }, [books, search, sortBy, sortDirection]);
 
   const pageData = paginate(visibleBooks, page, PAGE_SIZE);
 
@@ -48,18 +49,40 @@ function CataloguePage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select
-          className="select-input"
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-        >
-          <option value="cost">Цена</option>
-          <option value="stock">Наличие</option>
-          <option value="commentsNumber">Количество отзывов</option>
-          <option value="averageRating">Средний рейтинг</option>
-          <option value="author">Автор</option>
-          <option value="name">Название</option>
-        </select>
+        <div className="sort-control">
+          <button
+            className={`sort-direction-button ${sortDirection === "desc" ? "is-desc" : ""}`}
+            type="button"
+            aria-label={
+              sortDirection === "asc"
+                ? "Сортировка по возрастанию"
+                : "Сортировка по убыванию"
+            }
+            title={
+              sortDirection === "asc"
+                ? "Сортировка по возрастанию"
+                : "Сортировка по убыванию"
+            }
+            onClick={() =>
+              setSortDirection((current) => (current === "asc" ? "desc" : "asc"))
+            }
+          >
+            ▲
+          </button>
+          <select
+            className="select-input"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="cost">Цена</option>
+            <option value="stock">Наличие</option>
+            <option value="soldCount">Количество заказов</option>
+            <option value="commentsNumber">Количество отзывов</option>
+            <option value="averageRating">Средний рейтинг</option>
+            <option value="author">Автор</option>
+            <option value="name">Название</option>
+          </select>
+        </div>
       </div>
 
       {loading ? (
@@ -68,7 +91,7 @@ function CataloguePage() {
         <div className="empty-state">Книги не найдены.</div>
       ) : (
         <>
-          <BookGrid books={pageData.items} />
+          <BookGrid books={pageData.items} leaderSource={books} />
           <Pagination
             page={pageData.page}
             totalPages={pageData.totalPages}

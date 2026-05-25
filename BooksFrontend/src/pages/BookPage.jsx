@@ -1,23 +1,25 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { getBook } from "../api/api";
+import { getBook, getBooks } from "../api/api";
 import CommentsSection from "../components/CommentsSection";
 import { useCart } from "../context/CartContext";
-import { getImageUrl } from "../utils/books";
+import { getBookBadge, getImageUrl, getRatingClass } from "../utils/books";
 
 function BookPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const [book, setBook] = useState(null);
+  const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const { items, addToCart } = useCart();
 
   const backTarget = location.state?.from === "/catalogue" ? "/catalogue" : "/";
 
   const loadBook = async () => {
-    const data = await getBook(id);
+    const [data, allBooks] = await Promise.all([getBook(id), getBooks()]);
     setBook(data);
+    setBooks(allBooks);
     setLoading(false);
   };
 
@@ -44,6 +46,8 @@ function BookPage() {
 
   const inCart = items.find((item) => item.bookId === book.id)?.quantity || 0;
   const isDisabled = !book.available || inCart >= book.stock;
+  const rating = book.averageRating || 0;
+  const badge = getBookBadge(book, books);
 
   return (
     <main className="page-shell">
@@ -52,7 +56,10 @@ function BookPage() {
       </button>
 
       <section className="book-detail">
-        <img className="book-detail-cover" src={getImageUrl(book)} alt={book.title} />
+        <div className="book-detail-media">
+          <img className="book-detail-cover" src={getImageUrl(book)} alt={book.title} />
+          {badge && <span className="book-badge book-detail-badge">{badge}</span>}
+        </div>
 
         <div className="book-detail-info panel">
           <h1>{book.title}</h1>
@@ -60,16 +67,24 @@ function BookPage() {
 
           <div className="stat-grid">
             <div className="stat-tile">
-              <span className="stat-value">{book.stock}</span>
+              <span className={`stat-value stock-value ${book.stock === 0 ? "stock-empty" : "stock-available"}`}>
+                {book.stock}
+              </span>
               <span className="stat-label">В наличии</span>
             </div>
             <div className="stat-tile">
-              <span className="stat-value">{(book.averageRating || 0).toFixed(1)}</span>
+              <span className={`stat-value rating-value ${getRatingClass(rating)}`}>
+                {rating.toFixed(1)}
+              </span>
               <span className="stat-label">Оценка</span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">{book.commentsNumber || 0}</span>
               <span className="stat-label">Отзывов</span>
+            </div>
+            <div className="stat-tile">
+              <span className="stat-value">{book.soldCount || 0}</span>
+              <span className="stat-label">Заказов</span>
             </div>
           </div>
 

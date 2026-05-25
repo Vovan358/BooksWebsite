@@ -42,15 +42,15 @@ function LeaderboardPage() {
           <div className="stat-grid" style={{ gridTemplateColumns: "1fr" }}>
             <div className="stat-tile">
               <span className="stat-value">#{data.currentUserRanks.booksBoughtRank}</span>
-              <span className="stat-label">Количество купленных книг</span>
+              <span className="stat-label">Место по купленным книгам</span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">#{data.currentUserRanks.moneySpentRank}</span>
-              <span className="stat-label">Количество потраченных денег</span>
+              <span className="stat-label">Место по потраченным деньгам</span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">#{data.currentUserRanks.commentsLeftRank}</span>
-              <span className="stat-label">Количество оставленных комментариев</span>
+              <span className="stat-label">Место по оставленным отзывам</span>
             </div>
           </div>
         ) : (
@@ -77,9 +77,9 @@ function LeaderboardPage() {
               setPage(1);
             }}
           >
-            <option value="booksBought">Количество купленных книг</option>
-            <option value="moneySpent">Количество потраченных денег</option>
-            <option value="commentsLeft">Количество оставленных комментариев</option>
+            <option value="booksBought">Книги</option>
+            <option value="moneySpent">Деньги</option>
+            <option value="commentsLeft">Отзывы</option>
           </select>
         </div>
 

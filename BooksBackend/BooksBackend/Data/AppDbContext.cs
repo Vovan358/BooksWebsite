@@ -17,6 +17,10 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Book>()
+            .Property(b => b.CreatedAt)
+            .HasDefaultValueSql("GETUTCDATE()");
+
         modelBuilder.Entity<Comment>()
             .HasOne(c => c.User)
             .WithMany(u => u.Comments)

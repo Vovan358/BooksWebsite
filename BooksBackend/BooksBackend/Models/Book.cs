@@ -19,6 +19,8 @@ public class Book
 
     public string ImageUrl { get; set; } = "";
 
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     // Связь с комментариями
     public List<Comment> Comments { get; set; } = new();
 

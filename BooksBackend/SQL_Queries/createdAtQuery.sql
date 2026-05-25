@@ -1,0 +1,3 @@
+﻿ALTER TABLE Books
+ADD CreatedAt datetime2 NOT NULL
+CONSTRAINT DF_Books_CreatedAt DEFAULT GETUTCDATE();

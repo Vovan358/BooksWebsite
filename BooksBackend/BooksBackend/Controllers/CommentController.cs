@@ -1,17 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Distributed;
 using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
 public class CommentController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private const string BooksCacheKey = "books_cache";
 
-    public CommentController(AppDbContext context)
+    private readonly AppDbContext _context;
+    private readonly IDistributedCache _redis;
+
+    public CommentController(AppDbContext context, IDistributedCache redis)
     {
         _context = context;
+        _redis = redis;
     }
 
     [HttpGet("book/{bookId}")]
@@ -50,6 +55,7 @@ public class CommentController : ControllerBase
 
         _context.Comments.Add(comment);
         await _context.SaveChangesAsync();
+        await _redis.RemoveAsync(BooksCacheKey);
 
         return Ok(comment);
     }
@@ -77,6 +83,7 @@ public class CommentController : ControllerBase
 
         _context.Comments.Remove(comment);
         await _context.SaveChangesAsync();
+        await _redis.RemoveAsync(BooksCacheKey);
 
         return NoContent();
     }

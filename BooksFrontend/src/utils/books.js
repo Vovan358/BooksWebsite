@@ -17,7 +17,41 @@ export function filterBooks(books, search) {
   );
 }
 
-export function sortBooks(books, sortBy) {
+export function getRatingClass(rating) {
+  const value = Number(rating) || 0;
+
+  if (value < 3) return "rating-low";
+  if (value < 5) return "rating-orange";
+  if (value < 7) return "rating-yellow";
+  if (value < 8) return "rating-green";
+  if (value < 9) return "rating-dark-green";
+  return "rating-blue";
+}
+
+export function getBookBadge(book, books) {
+  const maxSold = Math.max(...books.map((item) => item.soldCount || 0), 0);
+  const reviewCandidates = books.filter((item) => (item.commentsNumber || 0) > 0);
+  const maxRating = Math.max(
+    ...reviewCandidates.map((item) => item.averageRating || 0),
+    0
+  );
+
+  if (maxSold > 0 && (book.soldCount || 0) === maxSold) {
+    return "ЛИДЕР ПРОДАЖ";
+  }
+
+  if (
+    maxRating > 0 &&
+    (book.commentsNumber || 0) > 0 &&
+    (book.averageRating || 0) === maxRating
+  ) {
+    return "ЛУЧШИЕ ОТЗЫВЫ";
+  }
+
+  return "";
+}
+
+export function sortBooks(books, sortBy, direction = "asc") {
   const sorted = [...books];
 
   sorted.sort((a, b) => {
@@ -25,11 +59,18 @@ export function sortBooks(books, sortBy) {
       case "cost":
         return a.price - b.price;
       case "stock":
-        return b.stock - a.stock;
+        return a.stock - b.stock;
       case "commentsNumber":
-        return (b.commentsNumber || 0) - (a.commentsNumber || 0);
+        return (a.commentsNumber || 0) - (b.commentsNumber || 0);
       case "averageRating":
-        return (b.averageRating || 0) - (a.averageRating || 0);
+        return (a.averageRating || 0) - (b.averageRating || 0);
+      case "soldCount":
+        return (a.soldCount || 0) - (b.soldCount || 0);
+      case "createdAt":
+        return (
+          new Date(a.createdAt || 0) - new Date(b.createdAt || 0) ||
+          a.id - b.id
+        );
       case "author":
         return a.author.localeCompare(b.author);
       case "name":
@@ -38,6 +79,10 @@ export function sortBooks(books, sortBy) {
         return a.id - b.id;
     }
   });
+
+  if (direction === "desc") {
+    sorted.reverse();
+  }
 
   return sorted;
 }

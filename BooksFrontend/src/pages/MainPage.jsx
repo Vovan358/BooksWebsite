@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getBooks } from "../api/api";
 import BookGrid from "../components/BookGrid";
 import Pagination from "../components/Pagination";
-import { filterBooks, paginate, PAGE_SIZE } from "../utils/books";
+import { filterBooks, paginate, PAGE_SIZE, sortBooks } from "../utils/books";
 
 function MainPage() {
   const [books, setBooks] = useState([]);
@@ -24,7 +24,10 @@ function MainPage() {
     setPage(1);
   }, [search]);
 
-  const filtered = useMemo(() => filterBooks(books, search), [books, search]);
+  const filtered = useMemo(
+    () => sortBooks(filterBooks(books, search), "createdAt", "desc"),
+    [books, search]
+  );
   const pageData = paginate(filtered, page, PAGE_SIZE);
 
   return (
@@ -53,7 +56,7 @@ function MainPage() {
         <div className="empty-state">Книги не найдены.</div>
       ) : (
         <>
-          <BookGrid books={pageData.items} />
+          <BookGrid books={pageData.items} leaderSource={books} />
           <Pagination
             page={pageData.page}
             totalPages={pageData.totalPages}

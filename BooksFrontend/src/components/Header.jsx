@@ -62,7 +62,7 @@ function Header() {
           Личный кабинет: {user || "Гость"}
         </Link>
         <button className="theme-toggle" type="button" onClick={toggleTheme}>
-          Тема: {theme === "dark" ? "тёмная" : "белая"}
+          Тема: {theme === "dark" ? "тёмная" : "светлая"}
         </button>
       </div>
     </header>

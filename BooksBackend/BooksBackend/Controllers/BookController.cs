@@ -77,6 +77,9 @@ public class BookController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(Book book)
     {
+        if (book.CreatedAt == default)
+            book.CreatedAt = DateTime.UtcNow;
+
         _context.Books.Add(book);
         await _context.SaveChangesAsync();
         await _redis.RemoveAsync(BooksCacheKey);
@@ -151,10 +154,12 @@ public class BookController : ControllerBase
                 Stock = b.Stock,
                 Description = b.Description,
                 ImageUrl = b.ImageUrl,
+                CreatedAt = b.CreatedAt,
                 CommentsNumber = b.Comments.Count,
                 AverageRating = b.Comments.Count == 0
                     ? 0
-                    : b.Comments.Average(c => c.Rating)
+                    : b.Comments.Average(c => c.Rating),
+                SoldCount = b.OrderItems.Sum(i => (int?)i.Quantity) ?? 0
             });
     }
 }

@@ -16,7 +16,11 @@ public class BookResponseDto
 
     public string ImageUrl { get; set; } = string.Empty;
 
+    public DateTime CreatedAt { get; set; }
+
     public int CommentsNumber { get; set; }
 
     public double AverageRating { get; set; }
+
+    public int SoldCount { get; set; }
 }

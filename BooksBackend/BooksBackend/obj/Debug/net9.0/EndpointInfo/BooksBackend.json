@@ -506,6 +506,10 @@
             "type": "string",
             "nullable": true
           },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
           "comments": {
             "type": "array",
             "items": {
