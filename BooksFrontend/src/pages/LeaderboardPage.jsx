@@ -6,9 +6,9 @@ import { useAuth } from "../context/AuthContext";
 const PAGE_SIZE = 10;
 
 const labels = {
-  booksBought: "Книг куплено",
-  moneySpent: "Потрачено денег",
-  commentsLeft: "Отзывов оставлено",
+  booksBought: "Количество купленных книг",
+  moneySpent: "Количество потраченных денег",
+  commentsLeft: "Количество оставленных комментариев",
 };
 
 function LeaderboardPage() {
@@ -42,24 +42,24 @@ function LeaderboardPage() {
           <div className="stat-grid" style={{ gridTemplateColumns: "1fr" }}>
             <div className="stat-tile">
               <span className="stat-value">#{data.currentUserRanks.booksBoughtRank}</span>
-              <span className="stat-label">книг куплено</span>
+              <span className="stat-label">Количество купленных книг</span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">#{data.currentUserRanks.moneySpentRank}</span>
-              <span className="stat-label">потрачено денег</span>
+              <span className="stat-label">Количество потраченных денег</span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">#{data.currentUserRanks.commentsLeftRank}</span>
-              <span className="stat-label">отзывов оставлено</span>
+              <span className="stat-label">Количество оставленных комментариев</span>
             </div>
           </div>
         ) : (
-          <>
-            <p className="page-subtitle">Войдите, чтобы увидеть свои места.</p>
+          <div className="inline-auth-prompt">
             <button className="btn btn-success" onClick={openAuth}>
-              Войти
+              Войдите
             </button>
-          </>
+            <span>чтобы увидеть свои места.</span>
+          </div>
         )}
       </aside>
 
@@ -77,9 +77,9 @@ function LeaderboardPage() {
               setPage(1);
             }}
           >
-            <option value="booksBought">booksBought</option>
-            <option value="moneySpent">moneySpent</option>
-            <option value="commentsLeft">commentsLeft</option>
+            <option value="booksBought">Количество купленных книг</option>
+            <option value="moneySpent">Количество потраченных денег</option>
+            <option value="commentsLeft">Количество оставленных комментариев</option>
           </select>
         </div>
 
@@ -88,7 +88,7 @@ function LeaderboardPage() {
             <thead>
               <tr>
                 <th>№</th>
-                <th>username</th>
+                <th>Покупатель</th>
                 <th>{labels[sortBy]}</th>
               </tr>
             </thead>

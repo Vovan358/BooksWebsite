@@ -155,6 +155,119 @@ body {
   background: #388e3c;
 }
 
+.header-user {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.header-user .header-action {
+  position: static;
+  width: 100%;
+}
+
+.theme-toggle {
+  margin: 0;
+  min-height: 34px;
+  border: 1px solid #3f4150;
+  border-radius: 6px;
+  background: #22232d;
+  color: #f3f4f6;
+  font-weight: 700;
+}
+
+.theme-toggle:hover {
+  background: #2f3140;
+}
+
+.page-loader {
+  margin: 16px 24px 0;
+  border: 1px solid rgba(255, 167, 38, 0.45);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255, 167, 38, 0.12);
+  color: #ffd08a;
+  font-weight: 700;
+  animation: pagePulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes pagePulse {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+:root[data-theme="light"] {
+  --text: #394150;
+  --text-h: #111827;
+  --bg: #f4f6fb;
+  --border: #d8deea;
+}
+
+:root[data-theme="light"] body,
+:root[data-theme="light"] .app-layout {
+  background: #f4f6fb;
+}
+
+:root[data-theme="light"] #root {
+  background: #f4f6fb;
+}
+
+:root[data-theme="light"] h1,
+:root[data-theme="light"] h2,
+:root[data-theme="light"] .book-card h3,
+:root[data-theme="light"] .stat-value,
+:root[data-theme="light"] .amount-control span {
+  color: #111827;
+}
+
+:root[data-theme="light"] .site-header,
+:root[data-theme="light"] .panel,
+:root[data-theme="light"] .review-item {
+  background: #ffffff;
+}
+
+:root[data-theme="light"] .book-card,
+:root[data-theme="light"] .stat-tile,
+:root[data-theme="light"] .search-input,
+:root[data-theme="light"] .select-input,
+:root[data-theme="light"] .form-input,
+:root[data-theme="light"] .form-textarea {
+  background: #ffffff;
+  color: #111827;
+  border-color: #d8deea;
+}
+
+:root[data-theme="light"] .page-subtitle,
+:root[data-theme="light"] .muted,
+:root[data-theme="light"] .book-meta,
+:root[data-theme="light"] .header-nav a {
+  color: #4b5563;
+}
+
+:root[data-theme="light"] .data-table th {
+  background: #eef2f7;
+  color: #111827;
+}
+
+:root[data-theme="light"] .data-table td {
+  color: #374151;
+}
+
+:root[data-theme="light"] .btn-ghost,
+:root[data-theme="light"] .theme-toggle {
+  color: #111827;
+  border-color: #cbd5e1;
+  background: #ffffff;
+}
+
 @media (max-width: 760px) {
   .site-header {
     display: flex;
@@ -164,6 +277,11 @@ body {
   }
 
   .header-action {
+    position: static;
+    width: 100%;
+  }
+
+  .header-user {
     position: static;
     width: 100%;
   }

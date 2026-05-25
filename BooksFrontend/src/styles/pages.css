@@ -68,6 +68,7 @@
   background: #262431;
   color: #f3f4f6;
   text-decoration: none;
+  cursor: pointer;
   transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
 }
 
@@ -303,6 +304,10 @@
   border: 1px solid rgba(67, 160, 71, 0.45);
 }
 
+.review-notice {
+  max-width: 260px;
+}
+
 .order-card {
   margin-bottom: 14px;
 }
@@ -350,6 +355,18 @@
   border-radius: 8px;
   text-align: center;
   color: #aeb5c2;
+}
+
+.inline-auth-prompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: #c9cfda;
+}
+
+.back-button {
+  margin-bottom: 18px;
 }
 
 @media (max-width: 900px) {

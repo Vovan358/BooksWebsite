@@ -1,14 +1,25 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { createOrder } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
 function CheckoutPage() {
+  const navigate = useNavigate();
   const { user, openAuth } = useAuth();
   const { items, totalCount, totalPrice, clearCart } = useCart();
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!success) return;
+
+    const timer = setTimeout(() => {
+      navigate("/");
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [success, navigate]);
 
   const handleCheckout = async () => {
     setError("");
@@ -40,7 +51,7 @@ function CheckoutPage() {
           <p className="page-subtitle">Подтвердите состав заказа.</p>
         </div>
         <Link className="btn btn-ghost" to="/cart">
-          Back to cart
+          Назад
         </Link>
       </div>
 
@@ -48,7 +59,7 @@ function CheckoutPage() {
       {error && <div className="notice">{error}</div>}
 
       <section className="panel">
-        <h2>OrderInfo</h2>
+        <h2>Сводка о заказе</h2>
         {items.length === 0 ? (
           <p className="page-subtitle">Корзина пуста.</p>
         ) : (
@@ -56,9 +67,9 @@ function CheckoutPage() {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Книга</th>
+                  <th>Название книги</th>
                   <th>Количество</th>
-                  <th>Цена</th>
+                  <th>Стоимость</th>
                 </tr>
               </thead>
               <tbody>
@@ -74,18 +85,18 @@ function CheckoutPage() {
             <div className="stat-grid">
               <div className="stat-tile">
                 <span className="stat-value">{totalCount}</span>
-                <span className="stat-label">books</span>
+                <span className="stat-label">Книг</span>
               </div>
               <div className="stat-tile">
                 <span className="stat-value">{totalPrice} ₽</span>
-                <span className="stat-label">total</span>
+                <span className="stat-label">Сумма заказа</span>
               </div>
             </div>
             {!user && (
               <p className="page-subtitle">Для оформления заказа нужно войти.</p>
             )}
             <button className="btn btn-success" onClick={handleCheckout}>
-              CheckOut
+              Оформить заказ!
             </button>
           </>
         )}

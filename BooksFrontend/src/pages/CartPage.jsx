@@ -22,10 +22,10 @@ function CartPage() {
             <thead>
               <tr>
                 <th>#</th>
-                <th>bookName</th>
-                <th>stock</th>
-                <th>amount</th>
-                <th>subtotal</th>
+                <th>Название книги</th>
+                <th>В наличии</th>
+                <th>Количество</th>
+                <th>Стоимость</th>
                 <th></th>
               </tr>
             </thead>
@@ -61,13 +61,13 @@ function CartPage() {
           </table>
 
           <div className="page-title-row" style={{ marginTop: "18px" }}>
-            <h2>Total: {totalPrice} ₽</h2>
+            <h2>Сумма заказа: {totalPrice} ₽</h2>
             <div className="button-row">
               <button className="btn btn-danger" onClick={clearCart}>
                 Очистить
               </button>
               <Link className="btn btn-success" to="/checkout">
-                Proceed
+                Продолжить
               </Link>
             </div>
           </div>

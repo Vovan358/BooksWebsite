@@ -21,11 +21,11 @@ function CommentForm({ book, onAdd }) {
 
   if (!user) {
     return (
-      <div className="panel">
-        <p className="page-subtitle">Войдите, чтобы оставить отзыв.</p>
+      <div className="inline-auth-prompt">
         <button className="btn btn-success" type="button" onClick={openAuth}>
-          Войти
+          Войдите
         </button>
+        <span>чтобы оставить отзыв.</span>
       </div>
     );
   }

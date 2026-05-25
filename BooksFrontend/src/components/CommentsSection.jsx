@@ -5,6 +5,7 @@ import CommentItem from "./CommentItem";
 
 function CommentsSection({ book, onChanged }) {
   const [comments, setComments] = useState([]);
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -18,7 +19,12 @@ function CommentsSection({ book, onChanged }) {
   const handleAdd = async (newComment) => {
     const saved = await addComment(newComment);
     setComments((prev) => [...prev, saved]);
+    setNotice("Отзыв оставлен!");
     onChanged?.();
+
+    setTimeout(() => {
+      setNotice("");
+    }, 1800);
   };
 
   const averageRating =
@@ -31,12 +37,14 @@ function CommentsSection({ book, onChanged }) {
     <section className="review-section">
       <div className="page-title-row">
         <div>
-          <h1>Отзывы</h1>
+          <h1>Отзывы ({comments.length})</h1>
           <p className="page-subtitle">
-            {comments.length} отзывов, средний балл {averageRating.toFixed(1)}/10
+            Средняя оценка: {averageRating.toFixed(1)}/10
           </p>
         </div>
       </div>
+
+      {notice && <div className="notice review-notice">{notice}</div>}
 
       <CommentForm book={book} onAdd={handleAdd} />
 

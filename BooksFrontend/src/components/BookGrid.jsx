@@ -1,9 +1,19 @@
-import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { getImageUrl } from "../utils/books";
 
 function BookGrid({ books }) {
   const { items, addToCart } = useCart();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const openBook = (book) => {
+    navigate(`/books/${book.id}`, {
+      state: {
+        from: location.pathname === "/catalogue" ? "/catalogue" : "/",
+      },
+    });
+  };
 
   return (
     <div className="book-grid">
@@ -12,31 +22,39 @@ function BookGrid({ books }) {
         const isDisabled = !book.available || inCart >= book.stock;
 
         return (
-          <article className="book-card" key={book.id}>
-            <Link to={`/books/${book.id}`} aria-label={book.title}>
-              <img
-                className="book-card-image"
-                src={getImageUrl(book)}
-                alt={book.title}
-              />
-            </Link>
+          <article
+            className="book-card"
+            key={book.id}
+            role="link"
+            tabIndex={0}
+            onClick={() => openBook(book)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") openBook(book);
+            }}
+          >
+            <img
+              className="book-card-image"
+              src={getImageUrl(book)}
+              alt={book.title}
+            />
             <div className="book-card-body">
               <div>
-                <Link to={`/books/${book.id}`} className="book-card-title">
-                  <h3>{book.title}</h3>
-                </Link>
+                <h3>{book.title}</h3>
                 <p className="muted">{book.author}</p>
                 <div className="book-meta">
                   <span>В наличии: {book.stock}</span>
-                  <span>Рейтинг: {(book.averageRating || 0).toFixed(1)}</span>
-                  <span>Отзывы: {book.commentsNumber || 0}</span>
+                  <span>Оценка: {(book.averageRating || 0).toFixed(1)}</span>
+                  <span>Отзывов: {book.commentsNumber || 0}</span>
                 </div>
               </div>
               <div className="button-row">
                 <span className="price">{book.price} ₽</span>
                 <button
                   className={isDisabled ? "btn btn-danger" : "btn btn-primary"}
-                  onClick={() => addToCart(book)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    addToCart(book);
+                  }}
                   disabled={isDisabled}
                 >
                   {isDisabled ? "Нет в наличии" : "В корзину"}

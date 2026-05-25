@@ -26,11 +26,11 @@ function PersonalPage() {
   if (!user) {
     return (
       <main className="page-shell">
-        <div className="empty-state">
-          <p>Войдите, чтобы открыть личный кабинет.</p>
+        <div className="empty-state inline-auth-prompt">
           <button className="btn btn-success" onClick={openAuth}>
-            Войти
+            Войдите
           </button>
+          <span>чтобы открыть личный кабинет.</span>
         </div>
       </main>
     );
@@ -52,15 +52,15 @@ function PersonalPage() {
             </div>
             <div className="stat-tile">
               <span className="stat-value">{stats.booksBought}</span>
-              <span className="stat-label">книг куплено</span>
+              <span className="stat-label">Количество купленных книг</span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">{stats.moneySpent} ₽</span>
-              <span className="stat-label">потрачено</span>
+              <span className="stat-label">Количество потраченных денег</span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">{stats.commentsLeft}</span>
-              <span className="stat-label">отзывов</span>
+              <span className="stat-label">Количество оставленных комментариев</span>
             </div>
           </div>
         )}
@@ -69,7 +69,7 @@ function PersonalPage() {
       <section>
         <div className="page-title-row">
           <div>
-            <h1>Order History</h1>
+            <h1>История заказов</h1>
             <p className="page-subtitle">История заказов и состав покупок.</p>
           </div>
         </div>

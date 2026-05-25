@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { getBooks } from "../api/api";
+import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
 function Header() {
   const [booksCount, setBooksCount] = useState(0);
+  const [theme, setTheme] = useState(
+    localStorage.getItem("booksWebsiteTheme") || "dark"
+  );
   const { totalCount } = useCart();
+  const { user } = useAuth();
 
   useEffect(() => {
     let ignore = false;
@@ -26,6 +31,15 @@ function Header() {
     };
   }, []);
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("booksWebsiteTheme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((current) => (current === "dark" ? "light" : "dark"));
+  };
+
   return (
     <header className="site-header">
       <Link className="header-action header-action-left" to="/cart">
@@ -43,9 +57,14 @@ function Header() {
         </nav>
       </div>
 
-      <Link className="header-action header-action-right" to="/personal">
-        Личный кабинет
-      </Link>
+      <div className="header-user">
+        <Link className="header-action header-action-right" to="/personal">
+          Личный кабинет: {user || "Гость"}
+        </Link>
+        <button className="theme-toggle" type="button" onClick={toggleTheme}>
+          Тема: {theme === "dark" ? "тёмная" : "белая"}
+        </button>
+      </div>
     </header>
   );
 }
