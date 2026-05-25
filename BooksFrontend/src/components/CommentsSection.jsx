@@ -1,9 +1,9 @@
+import { useEffect, useState } from "react";
+import { addComment, getComments } from "../api/api";
 import CommentForm from "./CommentForm";
 import CommentItem from "./CommentItem";
-import { useEffect, useState } from "react";
-import { getComments, addComment } from "../api/api";
 
-function CommentsSection({ book }) {
+function CommentsSection({ book, onChanged }) {
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
@@ -11,37 +11,45 @@ function CommentsSection({ book }) {
       const data = await getComments(book.id);
       setComments(data);
     };
+
     load();
-  }, [book]);
+  }, [book.id]);
 
   const handleAdd = async (newComment) => {
-    const saved = await addComment(newComment); // ✅ ОДИН POST
-
-    setComments(prev => [...prev, saved]); // сразу добавили
+    const saved = await addComment(newComment);
+    setComments((prev) => [...prev, saved]);
+    onChanged?.();
   };
 
   const averageRating =
     comments.length === 0
       ? 0
-      : (
-          comments.reduce((sum, c) => sum + c.rating, 0) /
-          comments.length
-        ).toFixed(1);
+      : comments.reduce((sum, comment) => sum + comment.rating, 0) /
+        comments.length;
 
   return (
-    <div style={{ marginTop: "30px" }}>
-      <h2>Отзывы на: {book.title}</h2>
-      <h3>({comments.length} отзывов)</h3>
-      <h3>Средний балл: {averageRating}/10</h3>
+    <section className="review-section">
+      <div className="page-title-row">
+        <div>
+          <h1>Отзывы</h1>
+          <p className="page-subtitle">
+            {comments.length} отзывов, средний балл {averageRating.toFixed(1)}/10
+          </p>
+        </div>
+      </div>
 
       <CommentForm book={book} onAdd={handleAdd} />
 
       {comments.length === 0 ? (
-        <p style={{ color: "#c9cfda" }}>Пока нет отзывов</p>
+        <div className="empty-state">Пока нет отзывов.</div>
       ) : (
-        comments.map(c => <CommentItem key={c.id} comment={c} />)
+        <div className="review-list">
+          {comments.map((comment) => (
+            <CommentItem key={comment.id} comment={comment} />
+          ))}
+        </div>
       )}
-    </div>
+    </section>
   );
 }
 

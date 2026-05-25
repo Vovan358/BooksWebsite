@@ -143,7 +143,7 @@ function AuthModal({ isOpen, onClose }) {
         </button>
 
         <button onClick={handleClose} style={{ marginTop: "10px", 
-            background: "#ff0800", color: "rgb(242, 242, 242)" }}>
+            background: "#a8130e", color: "rgb(242, 242, 242)" }}>
           Закрыть
         </button>
       </div>
