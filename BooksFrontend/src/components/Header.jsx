@@ -59,7 +59,7 @@ function Header() {
 
       <div className="header-user">
         <Link className="header-action header-action-right" to="/personal">
-          Личный кабинет: {user || "Гость"}
+          {user || "Гость"}
         </Link>
         <button className="theme-toggle" type="button" onClick={toggleTheme}>
           Тема: {theme === "dark" ? "тёмная" : "светлая"}
