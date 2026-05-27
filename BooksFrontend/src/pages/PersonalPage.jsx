@@ -60,7 +60,7 @@ function PersonalPage() {
             </div>
             <div className="stat-tile">
               <span className="stat-value">{stats.commentsLeft}</span>
-              <span className="stat-label">Количество оставленных комментариев</span>
+              <span className="stat-label">Оставленных комментариев</span>
             </div>
           </div>
         )}

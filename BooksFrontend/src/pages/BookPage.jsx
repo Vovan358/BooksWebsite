@@ -14,7 +14,11 @@ function BookPage() {
   const [loading, setLoading] = useState(true);
   const { items, addToCart } = useCart();
 
-  const backTarget = location.state?.from === "/catalogue" ? "/catalogue" : "/";
+  const backTarget =
+    typeof location.state?.from === "string" &&
+    location.state.from.startsWith("/catalogue")
+      ? location.state.from
+      : "/";
 
   const loadBook = async () => {
     const [data, allBooks] = await Promise.all([getBook(id), getBooks()]);

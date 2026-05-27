@@ -8,9 +8,11 @@ function BookGrid({ books, leaderSource = books }) {
   const location = useLocation();
 
   const openBook = (book) => {
+    const returnTarget = `${location.pathname}${location.search}`;
+
     navigate(`/books/${book.id}`, {
       state: {
-        from: location.pathname === "/catalogue" ? "/catalogue" : "/",
+        from: location.pathname === "/catalogue" ? returnTarget : "/",
       },
     });
   };

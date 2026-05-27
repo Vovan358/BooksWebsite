@@ -1,16 +1,46 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getBooks } from "../api/api";
 import BookGrid from "../components/BookGrid";
 import Pagination from "../components/Pagination";
 import { filterBooks, paginate, PAGE_SIZE, sortBooks } from "../utils/books";
 
+const SORT_OPTIONS = new Set([
+  "cost",
+  "stock",
+  "soldCount",
+  "commentsNumber",
+  "averageRating",
+  "author",
+  "name",
+]);
+
 function CataloguePage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("name");
-  const [sortDirection, setSortDirection] = useState("asc");
-  const [page, setPage] = useState(1);
+
+  const search = searchParams.get("q") || "";
+  const sortParam = searchParams.get("sort") || "name";
+  const sortBy = SORT_OPTIONS.has(sortParam) ? sortParam : "name";
+  const sortDirection = searchParams.get("dir") === "desc" ? "desc" : "asc";
+  const page = Math.max(Number(searchParams.get("page")) || 1, 1);
+
+  const updateCatalogueParams = (updates) => {
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
+
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value === "" || value === null || value === undefined) {
+          next.delete(key);
+        } else {
+          next.set(key, String(value));
+        }
+      });
+
+      return next;
+    });
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -21,10 +51,6 @@ function CataloguePage() {
 
     load();
   }, []);
-
-  useEffect(() => {
-    setPage(1);
-  }, [search, sortBy, sortDirection]);
 
   const visibleBooks = useMemo(() => {
     return sortBooks(filterBooks(books, search), sortBy, sortDirection);
@@ -47,7 +73,9 @@ function CataloguePage() {
           type="search"
           placeholder="Поиск по названию или автору"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) =>
+            updateCatalogueParams({ q: e.target.value, page: 1 })
+          }
         />
         <div className="sort-control">
           <button
@@ -64,7 +92,10 @@ function CataloguePage() {
                 : "Сортировка по убыванию"
             }
             onClick={() =>
-              setSortDirection((current) => (current === "asc" ? "desc" : "asc"))
+              updateCatalogueParams({
+                dir: sortDirection === "asc" ? "desc" : "asc",
+                page: 1,
+              })
             }
           >
             ▲
@@ -72,7 +103,9 @@ function CataloguePage() {
           <select
             className="select-input"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e) =>
+              updateCatalogueParams({ sort: e.target.value, page: 1 })
+            }
           >
             <option value="cost">Цена</option>
             <option value="stock">Наличие</option>
@@ -95,7 +128,9 @@ function CataloguePage() {
           <Pagination
             page={pageData.page}
             totalPages={pageData.totalPages}
-            onPageChange={setPage}
+            onPageChange={(nextPage) =>
+              updateCatalogueParams({ page: nextPage })
+            }
           />
         </>
       )}

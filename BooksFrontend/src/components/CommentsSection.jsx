@@ -85,10 +85,10 @@ function CommentsSection({ book, onChanged }) {
             >
               <option value="newFirst">Сначала новые</option>
               <option value="oldFirst">Сначала старые</option>
-              <option value="angryFirst">Сначала гневные</option>
-              <option value="praiseFirst">Сначала хвалебные</option>
-              <option value="shortFirst">Сначала короткие</option>
-              <option value="longFirst">Сначала длинные</option>
+              <option value="angryFirst">Сначала хвалебные</option>
+              <option value="praiseFirst">Сначала гневные</option>
+              <option value="shortFirst">Сначала длинные</option>
+              <option value="longFirst">Сначала короткие</option>
             </select>
           </div>
           <div className="review-list">
