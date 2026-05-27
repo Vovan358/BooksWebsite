@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { getBooks } from "../api/api";
 import BookGrid from "../components/BookGrid";
 import Pagination from "../components/Pagination";
+import { useFavorites } from "../context/FavoritesContext";
 import { filterBooks, paginate, PAGE_SIZE, sortBooks } from "../utils/books";
 
 const SORT_OPTIONS = new Set([
@@ -20,6 +21,7 @@ function CataloguePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { revision: favoritesRevision } = useFavorites();
 
   const search = searchParams.get("q") || "";
   const sortParam = searchParams.get("sort") || "name";
@@ -51,7 +53,7 @@ function CataloguePage() {
     };
 
     load();
-  }, []);
+  }, [favoritesRevision]);
 
   const visibleBooks = useMemo(() => {
     return sortBooks(filterBooks(books, search), sortBy, sortDirection);

@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { addComment, getComments } from "../api/api";
+import { addComment, getComments, reportComment, voteComment } from "../api/api";
+import { useAuth } from "../context/AuthContext";
 import CommentForm from "./CommentForm";
 import CommentItem from "./CommentItem";
 
 function CommentsSection({ book, onChanged }) {
+  const { user, openAuth } = useAuth();
   const [comments, setComments] = useState([]);
   const [notice, setNotice] = useState("");
   const [sortBy, setSortBy] = useState("newFirst");
@@ -28,6 +30,39 @@ function CommentsSection({ book, onChanged }) {
     }, 1800);
   };
 
+  const replaceComment = (updatedComment) => {
+    setComments((prev) =>
+      prev.map((comment) =>
+        comment.id === updatedComment.id ? updatedComment : comment
+      )
+    );
+  };
+
+  const handleVote = async (commentId, value) => {
+    if (!user) {
+      openAuth();
+      return;
+    }
+
+    const updated = await voteComment(commentId, value);
+    replaceComment(updated);
+  };
+
+  const handleReport = async (commentId) => {
+    if (!user) {
+      openAuth();
+      return;
+    }
+
+    const updated = await reportComment(commentId);
+    replaceComment(updated);
+    setNotice("Жалоба отправлена.");
+
+    setTimeout(() => {
+      setNotice("");
+    }, 1800);
+  };
+
   const averageRating =
     comments.length === 0
       ? 0
@@ -43,6 +78,10 @@ function CommentsSection({ book, onChanged }) {
           return a.rating - b.rating;
         case "praiseFirst":
           return b.rating - a.rating;
+        case "popularFirst":
+          return (b.score || 0) - (a.score || 0);
+        case "unpopularFirst":
+          return (a.score || 0) - (b.score || 0);
         case "oldFirst":
           return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
         case "shortFirst":
@@ -85,15 +124,22 @@ function CommentsSection({ book, onChanged }) {
             >
               <option value="newFirst">Сначала новые</option>
               <option value="oldFirst">Сначала старые</option>
-              <option value="angryFirst">Сначала хвалебные</option>
-              <option value="praiseFirst">Сначала гневные</option>
-              <option value="shortFirst">Сначала длинные</option>
-              <option value="longFirst">Сначала короткие</option>
+              <option value="angryFirst">Сначала гневные</option>
+              <option value="praiseFirst">Сначала хвалебные</option>
+              <option value="popularFirst">Сначала популярные</option>
+              <option value="unpopularFirst">Сначала непопулярные</option>
+              <option value="shortFirst">Сначала короткие</option>
+              <option value="longFirst">Сначала длинные</option>
             </select>
           </div>
           <div className="review-list">
             {sortedComments.map((comment) => (
-              <CommentItem key={comment.id} comment={comment} />
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                onReport={handleReport}
+                onVote={handleVote}
+              />
             ))}
           </div>
         </>

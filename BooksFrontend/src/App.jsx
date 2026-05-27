@@ -13,6 +13,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import MainPage from "./pages/MainPage";
 import PersonalPage from "./pages/PersonalPage";
+import UserPage from "./pages/UserPage";
 
 function App() {
   const { isAuthOpen, closeAuth } = useAuth();
@@ -30,6 +31,7 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/personal" element={<PersonalPage />} />
+          <Route path="/users/:id" element={<UserPage />} />
           <Route element={<AdminGuard />}>
             <Route path="/admin" element={<AdminPlaceholderPage />} />
             <Route path="/admin/users" element={<AdminPlaceholderPage />} />

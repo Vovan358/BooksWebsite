@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getBooks } from "../api/api";
 import BookGrid from "../components/BookGrid";
 import Pagination from "../components/Pagination";
+import { useFavorites } from "../context/FavoritesContext";
 import { filterBooks, paginate, PAGE_SIZE, sortBooks } from "../utils/books";
 
 function MainPage() {
@@ -9,6 +10,7 @@ function MainPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const { revision: favoritesRevision } = useFavorites();
 
   useEffect(() => {
     const load = async () => {
@@ -18,7 +20,7 @@ function MainPage() {
     };
 
     load();
-  }, []);
+  }, [favoritesRevision]);
 
   useEffect(() => {
     setPage(1);

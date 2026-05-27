@@ -9,6 +9,7 @@ export function FavoritesProvider({ children }) {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [revision, setRevision] = useState(0);
 
   const favoriteIds = useMemo(
     () => new Set(favorites.map((book) => book.id)),
@@ -62,6 +63,7 @@ export function FavoritesProvider({ children }) {
       try {
         await addFavorite(bookId);
         await refreshFavorites();
+        setRevision((current) => current + 1);
       } catch (err) {
         setError(err.message || "Не удалось добавить в избранное");
         await refreshFavorites();
@@ -81,6 +83,7 @@ export function FavoritesProvider({ children }) {
 
       try {
         await removeFavorite(bookId);
+        setRevision((current) => current + 1);
       } catch (err) {
         setError(err.message || "Не удалось удалить из избранного");
         await refreshFavorites();
@@ -108,6 +111,7 @@ export function FavoritesProvider({ children }) {
       favoriteIds,
       loading,
       error,
+      revision,
       isFavorite,
       addFavorite: add,
       removeFavorite: remove,
@@ -119,6 +123,7 @@ export function FavoritesProvider({ children }) {
       favoriteIds,
       loading,
       error,
+      revision,
       isFavorite,
       add,
       remove,

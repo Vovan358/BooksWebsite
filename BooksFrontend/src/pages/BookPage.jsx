@@ -14,7 +14,7 @@ function BookPage() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const { items, addToCart } = useCart();
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const { isFavorite, revision: favoritesRevision, toggleFavorite } = useFavorites();
 
   const backTarget =
     typeof location.state?.from === "string" &&
@@ -32,7 +32,7 @@ function BookPage() {
   useEffect(() => {
     setLoading(true);
     loadBook();
-  }, [id]);
+  }, [favoritesRevision, id]);
 
   if (loading) {
     return (
