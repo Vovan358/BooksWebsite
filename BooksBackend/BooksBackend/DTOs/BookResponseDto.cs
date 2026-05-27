@@ -23,4 +23,6 @@ public class BookResponseDto
     public double AverageRating { get; set; }
 
     public int SoldCount { get; set; }
+
+    public int FavoritesCount { get; set; }
 }

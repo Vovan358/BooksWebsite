@@ -43,7 +43,9 @@ public class AuthController : ControllerBase
         var user = new User
         {
             Username = dto.Username,
-            Role = UserRole
+            Role = UserRole,
+            CreatedAt = DateTime.UtcNow,
+            Profile = new UserProfile()
         };
 
 

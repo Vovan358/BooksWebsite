@@ -25,4 +25,6 @@ public class Book
     public List<Comment> Comments { get; set; } = new();
 
     public List<OrderItem> OrderItems { get; set; } = new();
+
+    public List<FavoriteBook> FavoriteBooks { get; set; } = new();
 }

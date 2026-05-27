@@ -21,4 +21,8 @@ public class Comment
 
     [JsonIgnore]
     public User? User { get; set; }
+
+    public List<CommentVote> Votes { get; set; } = new();
+
+    public List<CommentReport> Reports { get; set; } = new();
 }

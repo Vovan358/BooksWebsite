@@ -159,7 +159,8 @@ public class BookController : ControllerBase
                 AverageRating = b.Comments.Count == 0
                     ? 0
                     : b.Comments.Average(c => c.Rating),
-                SoldCount = b.OrderItems.Sum(i => (int?)i.Quantity) ?? 0
+                SoldCount = b.OrderItems.Sum(i => (int?)i.Quantity) ?? 0,
+                FavoritesCount = b.FavoriteBooks.Count
             });
     }
 }

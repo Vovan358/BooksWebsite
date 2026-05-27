@@ -22,8 +22,30 @@ public class CommentController : ControllerBase
     [HttpGet("book/{bookId}")]
     public async Task<IActionResult> GetByBook(int bookId)
     {
+        var currentUserId = GetCurrentUserId();
+
         var comments = await _context.Comments
             .Where(c => c.BookId == bookId)
+            .Select(c => new CommentResponseDto
+            {
+                Id = c.Id,
+                BookId = c.BookId,
+                UserId = c.UserId,
+                Author = c.Author,
+                Text = c.Text,
+                Rating = c.Rating,
+                CreatedAt = c.CreatedAt,
+                Score = c.Votes.Sum(v => (int?)v.Value) ?? 0,
+                MyVote = currentUserId == null
+                    ? 0
+                    : c.Votes
+                        .Where(v => v.UserId == currentUserId.Value)
+                        .Select(v => (int?)v.Value)
+                        .FirstOrDefault() ?? 0,
+                IsReportedByMe = currentUserId != null &&
+                    c.Reports.Any(r => r.UserId == currentUserId.Value),
+                ReportsCount = c.Reports.Count
+            })
             .ToListAsync();
 
         return Ok(comments);
@@ -57,7 +79,81 @@ public class CommentController : ControllerBase
         await _context.SaveChangesAsync();
         await _redis.RemoveAsync(BooksCacheKey);
 
-        return Ok(comment);
+        return Ok(await BuildCommentResponse(comment.Id));
+    }
+
+    [Authorize]
+    [HttpPost("{id}/vote")]
+    public async Task<IActionResult> Vote(int id, [FromBody] CommentVoteDto dto)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+            return Unauthorized("Invalid token");
+
+        if (dto.Value != 1 && dto.Value != -1)
+            return BadRequest("Vote value must be 1 or -1");
+
+        var commentExists = await _context.Comments.AnyAsync(c => c.Id == id);
+        if (!commentExists)
+            return NotFound();
+
+        var vote = await _context.CommentVotes
+            .FirstOrDefaultAsync(v => v.CommentId == id && v.UserId == userId.Value);
+
+        if (vote == null)
+        {
+            vote = new CommentVote
+            {
+                CommentId = id,
+                UserId = userId.Value,
+                Value = dto.Value,
+                CreatedAt = DateTime.UtcNow
+            };
+            _context.CommentVotes.Add(vote);
+        }
+        else if (vote.Value == dto.Value)
+        {
+            _context.CommentVotes.Remove(vote);
+        }
+        else
+        {
+            vote.Value = dto.Value;
+        }
+
+        await _context.SaveChangesAsync();
+
+        return Ok(await BuildCommentResponse(id));
+    }
+
+    [Authorize]
+    [HttpPost("{id}/report")]
+    public async Task<IActionResult> Report(int id)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+            return Unauthorized("Invalid token");
+
+        var commentExists = await _context.Comments.AnyAsync(c => c.Id == id);
+        if (!commentExists)
+            return NotFound();
+
+        var reportExists = await _context.CommentReports
+            .AnyAsync(r => r.CommentId == id && r.UserId == userId.Value);
+
+        if (!reportExists)
+        {
+            _context.CommentReports.Add(new CommentReport
+            {
+                CommentId = id,
+                UserId = userId.Value,
+                Status = "Open",
+                CreatedAt = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
+        return Ok(await BuildCommentResponse(id));
     }
 
     [Authorize]
@@ -86,5 +182,40 @@ public class CommentController : ControllerBase
         await _redis.RemoveAsync(BooksCacheKey);
 
         return NoContent();
+    }
+
+    private int? GetCurrentUserId()
+    {
+        var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return int.TryParse(value, out var userId) ? userId : null;
+    }
+
+    private async Task<CommentResponseDto> BuildCommentResponse(int commentId)
+    {
+        var currentUserId = GetCurrentUserId();
+
+        return await _context.Comments
+            .Where(c => c.Id == commentId)
+            .Select(c => new CommentResponseDto
+            {
+                Id = c.Id,
+                BookId = c.BookId,
+                UserId = c.UserId,
+                Author = c.Author,
+                Text = c.Text,
+                Rating = c.Rating,
+                CreatedAt = c.CreatedAt,
+                Score = c.Votes.Sum(v => (int?)v.Value) ?? 0,
+                MyVote = currentUserId == null
+                    ? 0
+                    : c.Votes
+                        .Where(v => v.UserId == currentUserId.Value)
+                        .Select(v => (int?)v.Value)
+                        .FirstOrDefault() ?? 0,
+                IsReportedByMe = currentUserId != null &&
+                    c.Reports.Any(r => r.UserId == currentUserId.Value),
+                ReportsCount = c.Reports.Count
+            })
+            .FirstAsync();
     }
 }
