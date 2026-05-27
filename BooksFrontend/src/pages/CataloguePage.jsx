@@ -9,6 +9,7 @@ const SORT_OPTIONS = new Set([
   "cost",
   "stock",
   "soldCount",
+  "favoritesCount",
   "commentsNumber",
   "averageRating",
   "author",
@@ -110,6 +111,7 @@ function CataloguePage() {
             <option value="cost">Цена</option>
             <option value="stock">Наличие</option>
             <option value="soldCount">Количество заказов</option>
+            <option value="favoritesCount">Количество в избранном</option>
             <option value="commentsNumber">Количество отзывов</option>
             <option value="averageRating">Средний рейтинг</option>
             <option value="author">Автор</option>

@@ -66,6 +66,8 @@ export function sortBooks(books, sortBy, direction = "asc") {
         return (a.averageRating || 0) - (b.averageRating || 0);
       case "soldCount":
         return (a.soldCount || 0) - (b.soldCount || 0);
+      case "favoritesCount":
+        return (a.favoritesCount || 0) - (b.favoritesCount || 0);
       case "createdAt":
         return (
           new Date(a.createdAt || 0) - new Date(b.createdAt || 0) ||

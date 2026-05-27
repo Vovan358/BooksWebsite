@@ -140,6 +140,42 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
 }
 
+.favorite-button {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  margin: 0;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  border-radius: 999px;
+  background: rgba(31, 32, 40, 0.76);
+  color: #ffffff;
+  font-size: 21px;
+  line-height: 1;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+}
+
+.favorite-button:hover {
+  background: rgba(43, 45, 56, 0.94);
+  transform: translateY(-1px) scale(1.04);
+}
+
+.favorite-button.is-favorite {
+  border-color: rgba(239, 83, 80, 0.95);
+  background: rgba(97, 20, 24, 0.88);
+  color: #ff5252;
+}
+
+.book-card-favorite,
+.book-detail-favorite {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
 .book-card-body {
   display: flex;
   flex-direction: column;
@@ -321,6 +357,13 @@
   font-size: 13px;
 }
 
+.book-detail-favorite {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  font-size: 25px;
+}
+
 .book-detail-info h1 {
   margin: 0 0 8px;
   font-size: 36px;
@@ -445,6 +488,15 @@
 
 .order-card {
   margin-bottom: 14px;
+}
+
+.personal-content {
+  display: grid;
+  gap: 20px;
+}
+
+.personal-section {
+  min-width: 0;
 }
 
 .order-images {

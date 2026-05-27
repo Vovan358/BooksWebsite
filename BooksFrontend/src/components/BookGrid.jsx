@@ -1,9 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useFavorites } from "../context/FavoritesContext";
 import { getBookBadge, getImageUrl, getRatingClass } from "../utils/books";
 
 function BookGrid({ books, leaderSource = books }) {
   const { items, addToCart } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,6 +26,7 @@ function BookGrid({ books, leaderSource = books }) {
         const isDisabled = !book.available || inCart >= book.stock;
         const rating = book.averageRating || 0;
         const badge = getBookBadge(book, leaderSource);
+        const favorite = isFavorite(book.id);
 
         return (
           <article
@@ -42,6 +45,18 @@ function BookGrid({ books, leaderSource = books }) {
               alt={book.title}
             />
             {badge && <span className="book-badge">{badge}</span>}
+            <button
+              className={`favorite-button book-card-favorite ${favorite ? "is-favorite" : ""}`}
+              type="button"
+              aria-label={favorite ? "Убрать из избранного" : "Добавить в избранное"}
+              title={favorite ? "Убрать из избранного" : "Добавить в избранное"}
+              onClick={(event) => {
+                event.stopPropagation();
+                toggleFavorite(book);
+              }}
+            >
+              ♥
+            </button>
             <div className="book-card-body">
               <div>
                 <h3>{book.title}</h3>

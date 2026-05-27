@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getBook, getBooks } from "../api/api";
 import CommentsSection from "../components/CommentsSection";
 import { useCart } from "../context/CartContext";
+import { useFavorites } from "../context/FavoritesContext";
 import { getBookBadge, getImageUrl, getRatingClass } from "../utils/books";
 
 function BookPage() {
@@ -13,6 +14,7 @@ function BookPage() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const { items, addToCart } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const backTarget =
     typeof location.state?.from === "string" &&
@@ -52,6 +54,7 @@ function BookPage() {
   const isDisabled = !book.available || inCart >= book.stock;
   const rating = book.averageRating || 0;
   const badge = getBookBadge(book, books);
+  const favorite = isFavorite(book.id);
 
   return (
     <main className="page-shell">
@@ -63,6 +66,15 @@ function BookPage() {
         <div className="book-detail-media">
           <img className="book-detail-cover" src={getImageUrl(book)} alt={book.title} />
           {badge && <span className="book-badge book-detail-badge">{badge}</span>}
+          <button
+            className={`favorite-button book-detail-favorite ${favorite ? "is-favorite" : ""}`}
+            type="button"
+            aria-label={favorite ? "Убрать из избранного" : "Добавить в избранное"}
+            title={favorite ? "Убрать из избранного" : "Добавить в избранное"}
+            onClick={() => toggleFavorite(book)}
+          >
+            ♥
+          </button>
         </div>
 
         <div className="book-detail-info panel">
@@ -89,6 +101,10 @@ function BookPage() {
             <div className="stat-tile">
               <span className="stat-value">{book.soldCount || 0}</span>
               <span className="stat-label">Заказов</span>
+            </div>
+            <div className="stat-tile">
+              <span className="stat-value">{book.favoritesCount || 0}</span>
+              <span className="stat-label">Избранное</span>
             </div>
           </div>
 
