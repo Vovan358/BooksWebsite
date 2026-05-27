@@ -47,6 +47,17 @@ export const addComment = (comment) =>
     body: JSON.stringify(comment),
   });
 
+export const voteComment = (commentId, value) =>
+  request(`/comment/${commentId}/vote`, {
+    method: "POST",
+    body: JSON.stringify({ value }),
+  });
+
+export const reportComment = (commentId) =>
+  request(`/comment/${commentId}/report`, {
+    method: "POST",
+  });
+
 // Auth
 export const loginRequest = (username, password) =>
   publicRequest("/auth/login", {
@@ -84,3 +95,92 @@ export const getLeaderboard = (
 
 // User
 export const getMyStats = () => request("/user/me/stats");
+
+export const getMyProfile = () => request("/user/me/profile");
+
+export const updateMyProfile = (profile) =>
+  request("/user/me/profile", {
+    method: "PUT",
+    body: JSON.stringify(profile),
+  });
+
+export const getPublicUserProfile = (id) => request(`/user/${id}/profile`);
+
+// Favorites
+export const getFavorites = () => request("/favorite");
+
+export const addFavorite = (bookId) =>
+  request("/favorite", {
+    method: "POST",
+    body: JSON.stringify({ bookId }),
+  });
+
+export const removeFavorite = (bookId) =>
+  request(`/favorite/${bookId}`, {
+    method: "DELETE",
+  });
+
+// Admin
+export const getAdminDashboard = () => request("/admin/dashboard");
+
+export const getAdminUsers = ({
+  search = "",
+  sortBy = "createdAt",
+  direction = "desc",
+  page = 1,
+  pageSize = 10,
+} = {}) =>
+  request(
+    `/admin/users${toQuery({ search, sortBy, direction, page, pageSize })}`
+  );
+
+export const getAdminOrders = ({
+  search = "",
+  sortBy = "date",
+  direction = "desc",
+  page = 1,
+  pageSize = 10,
+} = {}) =>
+  request(
+    `/admin/orders${toQuery({ search, sortBy, direction, page, pageSize })}`
+  );
+
+export const getAdminComments = ({
+  search = "",
+  onlyReported = false,
+  page = 1,
+  pageSize = 10,
+} = {}) =>
+  request(
+    `/admin/comments${toQuery({ search, onlyReported, page, pageSize })}`
+  );
+
+export const deleteAdminComment = (id) =>
+  request(`/admin/comments/${id}`, {
+    method: "DELETE",
+  });
+
+export const getAdminBooks = ({ search = "", page = 1, pageSize = 10 } = {}) =>
+  request(`/admin/books${toQuery({ search, page, pageSize })}`);
+
+export const createAdminBook = (book) =>
+  request("/admin/books", {
+    method: "POST",
+    body: JSON.stringify(book),
+  });
+
+export const updateAdminBook = (id, book) =>
+  request(`/admin/books/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(book),
+  });
+
+export const deleteAdminBook = (id) =>
+  request(`/admin/books/${id}`, {
+    method: "DELETE",
+  });
+
+export const clearAdminBookComments = (id) =>
+  request(`/admin/books/${id}/comments`, {
+    method: "DELETE",
+  });

@@ -5,13 +5,19 @@ import "./styles/pages.css";
 import App from './App.jsx'
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
+import { FavoritesProvider } from "./context/FavoritesContext";
+import { ProfileProvider } from "./context/ProfileContext";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <CartProvider>
-        <App />
-      </CartProvider>
+      <ProfileProvider>
+        <FavoritesProvider>
+          <CartProvider>
+            <App />
+          </CartProvider>
+        </FavoritesProvider>
+      </ProfileProvider>
     </AuthProvider>
   </StrictMode>
 )

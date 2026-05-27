@@ -181,3 +181,4 @@ C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\bin\Debug\net9.0\Prometheus.NetStandard.dll
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\bin\Debug\net9.0\Prometheus.AspNetCore.dll
 C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\BooksBackend.sourcelink.json
+C:\Users\Vovan358\Desktop\Всё\Programs\BooksWebsite\BooksBackend\BooksBackend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

@@ -1,8 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AdminGuard from "./components/AdminGuard";
 import AuthRedirectHandler from "./components/AuthRedirectHandler";
 import AuthModal from "./components/AuthModal";
 import Layout from "./components/Layout";
 import { useAuth } from "./context/AuthContext";
+import AdminPlaceholderPage from "./pages/AdminPlaceholderPage";
 import AuthPage from "./pages/AuthPage";
 import BookPage from "./pages/BookPage";
 import CartPage from "./pages/CartPage";
@@ -28,6 +30,13 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/personal" element={<PersonalPage />} />
+          <Route element={<AdminGuard />}>
+            <Route path="/admin" element={<AdminPlaceholderPage />} />
+            <Route path="/admin/users" element={<AdminPlaceholderPage />} />
+            <Route path="/admin/orders" element={<AdminPlaceholderPage />} />
+            <Route path="/admin/comments" element={<AdminPlaceholderPage />} />
+            <Route path="/admin/books" element={<AdminPlaceholderPage />} />
+          </Route>
         </Route>
       </Routes>
       <AuthModal isOpen={isAuthOpen} onClose={closeAuth} />
