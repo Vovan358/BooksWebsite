@@ -75,10 +75,10 @@ export const registerRequest = (username, password) =>
   });
 
 // Orders
-export const createOrder = (items) =>
+export const createOrder = (items, orderInfo = {}) =>
   request("/order", {
     method: "POST",
-    body: JSON.stringify({ items }),
+    body: JSON.stringify({ items, ...orderInfo }),
   });
 
 export const getMyOrders = () => request("/order/my");

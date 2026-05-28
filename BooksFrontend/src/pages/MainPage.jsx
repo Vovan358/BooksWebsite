@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { getBooks } from "../api/api";
 import BookGrid from "../components/BookGrid";
+import PageSkeleton from "../components/PageSkeleton";
 import Pagination from "../components/Pagination";
 import { useFavorites } from "../context/FavoritesContext";
 import { filterBooks, paginate, PAGE_SIZE, sortBooks } from "../utils/books";
+import { getRecentlyViewed } from "../utils/recentlyViewed";
 
 function MainPage() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [recentlyViewed, setRecentlyViewed] = useState(getRecentlyViewed);
   const { revision: favoritesRevision } = useFavorites();
 
   useEffect(() => {
@@ -25,6 +28,16 @@ function MainPage() {
   useEffect(() => {
     setPage(1);
   }, [search]);
+
+  useEffect(() => {
+    const updateRecent = () => setRecentlyViewed(getRecentlyViewed());
+    window.addEventListener("recently-viewed:changed", updateRecent);
+    window.addEventListener("storage", updateRecent);
+    return () => {
+      window.removeEventListener("recently-viewed:changed", updateRecent);
+      window.removeEventListener("storage", updateRecent);
+    };
+  }, []);
 
   const filtered = useMemo(
     () => sortBooks(filterBooks(books, search), "createdAt", "desc"),
@@ -53,7 +66,7 @@ function MainPage() {
       </div>
 
       {loading ? (
-        <div className="empty-state">Загрузка книг...</div>
+        <PageSkeleton />
       ) : pageData.items.length === 0 ? (
         <div className="empty-state">Книги не найдены.</div>
       ) : (
@@ -65,6 +78,18 @@ function MainPage() {
             onPageChange={setPage}
           />
         </>
+      )}
+
+      {recentlyViewed.length > 0 && (
+        <section className="recent-section">
+          <div className="page-title-row">
+            <div>
+              <h1>Недавно просмотрено</h1>
+              <p className="page-subtitle">Последние книги, в которые вы заходили.</p>
+            </div>
+          </div>
+          <BookGrid books={recentlyViewed.slice(0, 10)} leaderSource={books} />
+        </section>
       )}
     </main>
   );

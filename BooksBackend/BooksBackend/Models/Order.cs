@@ -10,6 +10,8 @@ public class Order
 
     public int TotalPrice { get; set; }
 
+    public string DeliveryAddress { get; set; } = string.Empty;
+
     [JsonIgnore]
     public User? User { get; set; }
 

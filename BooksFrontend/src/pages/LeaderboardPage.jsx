@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getLeaderboard } from "../api/api";
+import PageSkeleton from "../components/PageSkeleton";
 import Pagination from "../components/Pagination";
 import { useAuth } from "../context/AuthContext";
 
@@ -16,11 +17,14 @@ function LeaderboardPage() {
   const [sortBy, setSortBy] = useState("booksBought");
   const [page, setPage] = useState(1);
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
+      setLoading(true);
       const result = await getLeaderboard(sortBy, page, PAGE_SIZE);
       setData(result);
+      setLoading(false);
     };
 
     load();
@@ -33,6 +37,10 @@ function LeaderboardPage() {
       : sortBy === "commentsLeft"
       ? "commentsLeft"
       : "booksBought";
+
+  if (loading && !data) {
+    return <PageSkeleton />;
+  }
 
   return (
     <main className="page-shell split-layout">

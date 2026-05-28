@@ -4,12 +4,9 @@ import { createOrder, getBooks } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useProfile } from "../context/ProfileContext";
-
-const PICKUP_POINTS = [
-  "Москва, Тверская улица, 7",
-  "Санкт-Петербург, Невский проспект, 28",
-  "Казань, улица Баумана, 12",
-];
+import { useToast } from "../context/ToastContext";
+import { getCheckoutDeliveryAddress } from "../utils/delivery";
+import { PICKUP_POINTS } from "../utils/pickupPoints";
 
 function getDeliveryDays(country, city) {
   const normalizedCountry = country.trim().toLowerCase();
@@ -25,6 +22,7 @@ function CheckoutPage() {
   const { user } = useAuth();
   const { items, totalCount, totalPrice, clearCart, syncWithBooks } = useCart();
   const { profile } = useProfile();
+  const { showToast } = useToast();
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [syncNotice, setSyncNotice] = useState("");
@@ -52,6 +50,9 @@ function CheckoutPage() {
 
   useEffect(() => {
     if (!profile) return;
+    const pickupPoint = PICKUP_POINTS.includes(profile.pickupPoint)
+      ? profile.pickupPoint
+      : PICKUP_POINTS[0];
 
     setCheckoutInfo({
       email: profile.email || "",
@@ -60,7 +61,7 @@ function CheckoutPage() {
       street: profile.street || "",
       house: profile.house || "",
       apartment: profile.apartment || "",
-      pickupPoint: profile.pickupPoint || PICKUP_POINTS[0],
+      pickupPoint,
     });
   }, [profile]);
 
@@ -82,17 +83,48 @@ function CheckoutPage() {
       return;
     }
 
+    if (
+      checkoutInfo.email &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(checkoutInfo.email)
+    ) {
+      const message = "Введите корректный email.";
+      setError(message);
+      showToast(message, "error");
+      return;
+    }
+
+    if (
+      deliveryType === "home" &&
+      [
+        checkoutInfo.country,
+        checkoutInfo.city,
+        checkoutInfo.street,
+        checkoutInfo.house,
+        checkoutInfo.apartment,
+      ].some((value) => !value.trim())
+    ) {
+      const message = "Заполните все поля адреса доставки.";
+      setError(message);
+      showToast(message, "error");
+      return;
+    }
+
     try {
       await createOrder(
         items.map((item) => ({
           bookId: item.bookId,
           quantity: item.quantity,
-        }))
+        })),
+        {
+          deliveryAddress: getCheckoutDeliveryAddress(checkoutInfo, deliveryType),
+        }
       );
       clearCart();
       setSuccess(true);
+      showToast("Заказ оформлен!");
     } catch (err) {
       setError(err.message || "Не удалось оформить заказ");
+      showToast("Не удалось оформить заказ.", "error");
     }
   };
 
@@ -115,7 +147,6 @@ function CheckoutPage() {
         </Link>
       </div>
 
-      {success && <div className="notice">Заказ оформлен!</div>}
       {error && <div className="notice">{error}</div>}
       {syncNotice && <div className="notice">{syncNotice}</div>}
 

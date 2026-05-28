@@ -42,7 +42,7 @@ function Header() {
 
   return (
     <header className="site-header">
-      <Link className="header-action header-action-left" to="/cart">
+      <Link className="header-action header-action-left" data-cart-button to="/cart">
         Корзина ({totalCount})
       </Link>
 
@@ -61,8 +61,14 @@ function Header() {
         <Link className="header-action header-action-right" to="/personal">
           {user || "Гость"}
         </Link>
-        <button className="theme-toggle" type="button" onClick={toggleTheme}>
-          Тема: {theme === "dark" ? "тёмная" : "светлая"}
+        <button
+          className={`theme-toggle theme-switch ${theme === "light" ? "is-light" : ""}`}
+          type="button"
+          onClick={toggleTheme}
+          aria-label="Переключить тему"
+          title={theme === "dark" ? "Тёмная тема" : "Светлая тема"}
+        >
+          <span />
         </button>
       </div>
     </header>

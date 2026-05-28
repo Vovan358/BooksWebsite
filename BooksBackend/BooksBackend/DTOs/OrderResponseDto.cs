@@ -8,6 +8,8 @@ public class OrderResponseDto
 
     public int TotalPrice { get; set; }
 
+    public string DeliveryAddress { get; set; } = string.Empty;
+
     public List<OrderHistoryItemDto> Items { get; set; } = new();
 }
 

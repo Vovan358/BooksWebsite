@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import Breadcrumbs from "./Breadcrumbs";
 import Header from "./Header";
+import PageSkeleton from "./PageSkeleton";
 
 const LOADING_PATHS = new Set(["/", "/catalogue", "/leaderboard"]);
 
@@ -27,9 +29,7 @@ function Layout() {
     <div className="app-layout">
       <Header />
       {isPageLoading ? (
-        <div className="page-loader" role="status" aria-live="polite">
-          Загрузка раздела...
-        </div>
+        <PageSkeleton />
       ) : (
         <motion.div
           key={location.pathname}
@@ -37,6 +37,7 @@ function Layout() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.32, ease: "easeOut" }}
         >
+          <Breadcrumbs />
           <Outlet />
         </motion.div>
       )}

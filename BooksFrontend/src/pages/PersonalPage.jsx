@@ -5,14 +5,13 @@ import Pagination from "../components/Pagination";
 import { useAuth } from "../context/AuthContext";
 import { useFavorites } from "../context/FavoritesContext";
 import { useProfile } from "../context/ProfileContext";
+import { useToast } from "../context/ToastContext";
 import { filterBooks, getImageUrl, paginate } from "../utils/books";
+import { formatRelativeDate } from "../utils/date";
+import { formatAddress } from "../utils/delivery";
+import { PICKUP_POINTS } from "../utils/pickupPoints";
 
 const PERSONAL_PAGE_SIZE = 3;
-const PICKUP_POINTS = [
-  "Москва, Тверская улица, 7",
-  "Санкт-Петербург, Невский проспект, 28",
-  "Нищенск",
-];
 
 const EMPTY_PROFILE_FORM = {
   avatarUrl: "",
@@ -40,7 +39,9 @@ function toProfileForm(profile) {
     street: profile?.street || "",
     house: profile?.house || "",
     apartment: profile?.apartment || "",
-    pickupPoint: profile?.pickupPoint || PICKUP_POINTS[0],
+    pickupPoint: PICKUP_POINTS.includes(profile?.pickupPoint)
+      ? profile.pickupPoint
+      : PICKUP_POINTS[0],
     showFavorites: profile?.showFavorites ?? true,
     showOrderHistory: profile?.showOrderHistory ?? false,
     showStats: profile?.showStats ?? true,
@@ -74,7 +75,7 @@ function PersonalPage() {
   const [profileForm, setProfileForm] = useState(EMPTY_PROFILE_FORM);
   const [descriptionDraft, setDescriptionDraft] = useState("");
   const [isEditingDescription, setEditingDescription] = useState(false);
-  const [notice, setNotice] = useState("");
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (!user) return;
@@ -125,9 +126,17 @@ function PersonalPage() {
   };
 
   const saveProfileForm = async (nextForm = profileForm) => {
-    await saveProfile(nextForm);
-    setNotice("Профиль сохранён.");
-    setTimeout(() => setNotice(""), 1800);
+    if (nextForm.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextForm.email)) {
+      showToast("Введите корректный email.", "error");
+      return;
+    }
+
+    try {
+      await saveProfile(nextForm);
+      showToast("Профиль сохранён.");
+    } catch {
+      showToast("Не удалось сохранить профиль.", "error");
+    }
   };
 
   const saveDescription = async () => {
@@ -240,8 +249,6 @@ function PersonalPage() {
       </aside>
 
       <section className="personal-content">
-        {notice && <div className="toast-notice">{notice}</div>}
-
         <section className="panel personal-section">
           <div className="page-title-row">
             <div>
@@ -420,12 +427,19 @@ function PersonalPage() {
                 <article className="panel order-card" key={order.id}>
                   <div className="page-title-row">
                     <div>
-                      <h2>{new Date(order.date).toLocaleString()}</h2>
+                      <h2>{formatRelativeDate(order.date)}</h2>
                       <p className="page-subtitle">
                         {order.items.map((item) => `${item.title} x${item.quantity}`).join(", ")}
                       </p>
                     </div>
-                    <span className="price">{order.totalPrice} ₽</span>
+                    <div className="order-summary-side">
+                      <span className="price">{order.totalPrice} ₽</span>
+                      <span className="muted">
+                        {order.deliveryAddress
+                          ? formatAddress([order.deliveryAddress])
+                          : "Адрес доставки не указан."}
+                      </span>
+                    </div>
                   </div>
                   <div className="order-images">
                     {order.items.slice(0, 3).map((item) => (

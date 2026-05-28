@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { addComment, getComments, reportComment, voteComment } from "../api/api";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import CommentForm from "./CommentForm";
 import CommentItem from "./CommentItem";
 
 function CommentsSection({ book, onChanged }) {
   const { user, openAuth } = useAuth();
+  const { showToast } = useToast();
   const [comments, setComments] = useState([]);
-  const [notice, setNotice] = useState("");
   const [sortBy, setSortBy] = useState("newFirst");
 
   useEffect(() => {
@@ -22,12 +23,8 @@ function CommentsSection({ book, onChanged }) {
   const handleAdd = async (newComment) => {
     const saved = await addComment(newComment);
     setComments((prev) => [...prev, saved]);
-    setNotice("Отзыв оставлен!");
+    showToast("Отзыв оставлен!");
     onChanged?.();
-
-    setTimeout(() => {
-      setNotice("");
-    }, 1800);
   };
 
   const replaceComment = (updatedComment) => {
@@ -56,11 +53,7 @@ function CommentsSection({ book, onChanged }) {
 
     const updated = await reportComment(commentId);
     replaceComment(updated);
-    setNotice("Жалоба отправлена.");
-
-    setTimeout(() => {
-      setNotice("");
-    }, 1800);
+    showToast("Жалоба отправлена.");
   };
 
   const averageRating =
@@ -107,8 +100,6 @@ function CommentsSection({ book, onChanged }) {
           </p>
         </div>
       </div>
-
-      {notice && <div className="notice review-notice">{notice}</div>}
 
       <CommentForm book={book} onAdd={handleAdd} />
 

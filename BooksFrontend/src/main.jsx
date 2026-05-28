@@ -7,16 +7,19 @@ import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { FavoritesProvider } from "./context/FavoritesContext";
 import { ProfileProvider } from "./context/ProfileContext";
+import { ToastProvider } from "./context/ToastContext";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <ProfileProvider>
-        <FavoritesProvider>
-          <CartProvider>
-            <App />
-          </CartProvider>
-        </FavoritesProvider>
+        <ToastProvider>
+          <FavoritesProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </FavoritesProvider>
+        </ToastProvider>
       </ProfileProvider>
     </AuthProvider>
   </StrictMode>

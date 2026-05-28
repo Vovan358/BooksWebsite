@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
+import { formatRelativeDate } from "../utils/date";
 
 function CommentItem({ comment, onReport, onVote }) {
   const { profile } = useProfile();
@@ -22,7 +23,7 @@ function CommentItem({ comment, onReport, onVote }) {
           {authorContent}
         </strong>
         {comment.createdAt &&
-          <span className="muted"> • {new Date(comment.createdAt).toLocaleDateString()}</span>}
+          <span className="muted"> • {formatRelativeDate(comment.createdAt)}</span>}
       </div>
       <p className="page-subtitle">{comment.text}</p>
       <div className="review-actions">

@@ -1239,6 +1239,10 @@
               "$ref": "#/components/schemas/OrderItemDto"
             },
             "nullable": true
+          },
+          "deliveryAddress": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1313,6 +1317,10 @@
           "totalPrice": {
             "type": "integer",
             "format": "int32"
+          },
+          "deliveryAddress": {
+            "type": "string",
+            "nullable": true
           },
           "items": {
             "type": "array",

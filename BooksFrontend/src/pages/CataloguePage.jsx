@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getBooks } from "../api/api";
 import BookGrid from "../components/BookGrid";
+import PageSkeleton from "../components/PageSkeleton";
 import Pagination from "../components/Pagination";
 import { useFavorites } from "../context/FavoritesContext";
 import { filterBooks, paginate, PAGE_SIZE, sortBooks } from "../utils/books";
@@ -27,6 +28,8 @@ function CataloguePage() {
   const sortParam = searchParams.get("sort") || "name";
   const sortBy = SORT_OPTIONS.has(sortParam) ? sortParam : "name";
   const sortDirection = searchParams.get("dir") === "desc" ? "desc" : "asc";
+  const onlyAvailable = searchParams.get("available") === "1";
+  const onlyReviewed = searchParams.get("reviewed") === "1";
   const page = Math.max(Number(searchParams.get("page")) || 1, 1);
 
   const updateCatalogueParams = (updates) => {
@@ -56,8 +59,11 @@ function CataloguePage() {
   }, [favoritesRevision]);
 
   const visibleBooks = useMemo(() => {
-    return sortBooks(filterBooks(books, search), sortBy, sortDirection);
-  }, [books, search, sortBy, sortDirection]);
+    let next = filterBooks(books, search);
+    if (onlyAvailable) next = next.filter((book) => book.stock > 0);
+    if (onlyReviewed) next = next.filter((book) => (book.commentsNumber || 0) > 0);
+    return sortBooks(next, sortBy, sortDirection);
+  }, [books, onlyAvailable, onlyReviewed, search, sortBy, sortDirection]);
 
   const pageData = paginate(visibleBooks, page, PAGE_SIZE);
 
@@ -80,6 +86,13 @@ function CataloguePage() {
             updateCatalogueParams({ q: e.target.value, page: 1 })
           }
         />
+        <button
+          className="btn btn-ghost"
+          type="button"
+          onClick={() => setSearchParams({})}
+        >
+          Очистить фильтры
+        </button>
         <div className="sort-control">
           <button
             className={`sort-direction-button ${sortDirection === "desc" ? "is-desc" : ""}`}
@@ -122,8 +135,35 @@ function CataloguePage() {
         </div>
       </div>
 
+      <div className="filter-scroll-row">
+        <button
+          className={`filter-chip ${onlyAvailable ? "is-active" : ""}`}
+          type="button"
+          onClick={() =>
+            updateCatalogueParams({
+              available: onlyAvailable ? "" : "1",
+              page: 1,
+            })
+          }
+        >
+          Только в наличии
+        </button>
+        <button
+          className={`filter-chip ${onlyReviewed ? "is-active" : ""}`}
+          type="button"
+          onClick={() =>
+            updateCatalogueParams({
+              reviewed: onlyReviewed ? "" : "1",
+              page: 1,
+            })
+          }
+        >
+          Только с отзывами
+        </button>
+      </div>
+
       {loading ? (
-        <div className="empty-state">Загрузка каталога...</div>
+        <PageSkeleton />
       ) : pageData.items.length === 0 ? (
         <div className="empty-state">Книги не найдены.</div>
       ) : (

@@ -60,7 +60,8 @@ public class OrderController : ControllerBase
         var order = new Order
         {
             UserId = userId.Value,
-            Date = DateTime.UtcNow
+            Date = DateTime.UtcNow,
+            DeliveryAddress = dto.DeliveryAddress.Trim()
         };
 
         foreach (var item in groupedItems)
@@ -110,6 +111,7 @@ public class OrderController : ControllerBase
                 UserId = o.UserId,
                 Date = o.Date,
                 TotalPrice = o.TotalPrice,
+                DeliveryAddress = o.DeliveryAddress,
                 Items = o.Items.Select(i => new OrderHistoryItemDto
                 {
                     BookId = i.BookId,
@@ -141,6 +143,7 @@ public class OrderController : ControllerBase
                 UserId = o.UserId,
                 Date = o.Date,
                 TotalPrice = o.TotalPrice,
+                DeliveryAddress = o.DeliveryAddress,
                 Items = o.Items.Select(i => new OrderHistoryItemDto
                 {
                     BookId = i.BookId,

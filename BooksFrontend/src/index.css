@@ -184,6 +184,30 @@ body {
   background: #2f3140;
 }
 
+.theme-switch {
+  position: relative;
+  width: 74px;
+  min-height: 34px;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.theme-switch span {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #ffa726;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.theme-switch.is-light span {
+  transform: translateX(38px);
+  background: #43a047;
+}
+
 .page-loader {
   margin: 16px 24px 0;
   border: 1px solid rgba(255, 167, 38, 0.45);
@@ -193,6 +217,26 @@ body {
   color: #ffd08a;
   font-weight: 700;
   animation: pagePulse 0.9s ease-in-out infinite alternate;
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 14px 24px 0;
+  color: #aeb5c2;
+  font-size: 14px;
+}
+
+.breadcrumbs a {
+  color: #ffa726;
+  text-decoration: none;
+}
+
+.breadcrumb-part {
+  display: inline-flex;
+  gap: 7px;
 }
 
 @keyframes pagePulse {
