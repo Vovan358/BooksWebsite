@@ -36,7 +36,15 @@ function emitBooksChanged() {
   window.dispatchEvent(new CustomEvent("books:changed"));
 }
 
-function parseCsvRows(text) {
+function detectCsvDelimiter(text) {
+  const firstLine = text.split(/\r?\n/, 1)[0] || "";
+  const commaCount = (firstLine.match(/,/g) || []).length;
+  const semicolonCount = (firstLine.match(/;/g) || []).length;
+
+  return semicolonCount > commaCount ? ";" : ",";
+}
+
+function parseCsvRows(text, delimiter = ",") {
   const rows = [];
   let row = [];
   let value = "";
@@ -51,7 +59,7 @@ function parseCsvRows(text) {
       index += 1;
     } else if (char === '"') {
       insideQuotes = !insideQuotes;
-    } else if (char === "," && !insideQuotes) {
+    } else if (char === delimiter && !insideQuotes) {
       row.push(value.trim());
       value = "";
     } else if ((char === "\n" || char === "\r") && !insideQuotes) {
@@ -502,7 +510,9 @@ function AdminBooks({ onChanged, showToast }) {
     if (!file) return;
 
     const text = await file.text();
-    const [headers, ...lines] = parseCsvRows(text);
+    const delimiter = detectCsvDelimiter(text);
+    const [rawHeaders, ...lines] = parseCsvRows(text, delimiter);
+    const headers = rawHeaders?.map((header) => header.replace(/^\uFEFF/, "").trim()) || [];
     if (!headers?.length) {
       showToast("CSV-файл пустой или без заголовков.", "error");
       event.target.value = "";

@@ -24,8 +24,11 @@ export function addRecentlyViewed(book) {
 }
 
 export function syncRecentlyViewed(visibleBooks) {
-  const visibleIds = new Set(visibleBooks.map((book) => book.id));
-  const next = getRecentlyViewed().filter((book) => visibleIds.has(book.id));
+  const visibleById = new Map(visibleBooks.map((book) => [book.id, book]));
+  const next = getRecentlyViewed()
+    .map((book) => visibleById.get(book.id))
+    .filter(Boolean);
+
   localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(next));
   window.dispatchEvent(new CustomEvent("recently-viewed:changed"));
   return next;

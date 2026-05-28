@@ -19,7 +19,7 @@ function BookPage() {
   const [loading, setLoading] = useState(true);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const { items, addToCart, removeFromCart } = useCart();
-  const { isFavorite, revision: favoritesRevision, toggleFavorite } = useFavorites();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { isAdmin } = useProfile();
   const { showToast } = useToast();
 
@@ -41,7 +41,7 @@ function BookPage() {
   useEffect(() => {
     setLoading(true);
     loadBook();
-  }, [favoritesRevision, id]);
+  }, [id]);
 
   if (loading) {
     return (

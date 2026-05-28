@@ -13,7 +13,8 @@ import { formatAddress } from "../utils/delivery";
 import { PICKUP_POINTS } from "../utils/pickupPoints";
 import { pluralRu } from "../utils/plural";
 
-const PERSONAL_PAGE_SIZE = 3;
+const FAVORITES_PAGE_SIZE = 4;
+const ORDERS_PAGE_SIZE = 3;
 
 const EMPTY_PROFILE_FORM = {
   avatarUrl: "",
@@ -121,8 +122,8 @@ function PersonalPage() {
     [orders, orderSearch]
   );
 
-  const favoritePageData = paginate(filteredFavorites, favoritePage, PERSONAL_PAGE_SIZE);
-  const orderPageData = paginate(filteredOrders, orderPage, PERSONAL_PAGE_SIZE);
+  const favoritePageData = paginate(filteredFavorites, favoritePage, FAVORITES_PAGE_SIZE);
+  const orderPageData = paginate(filteredOrders, orderPage, ORDERS_PAGE_SIZE);
 
   const updateProfileField = (field, value) => {
     setProfileForm((current) => ({ ...current, [field]: value }));

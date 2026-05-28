@@ -8,7 +8,8 @@ import { formatRelativeDate } from "../utils/date";
 import { formatAddress } from "../utils/delivery";
 import { pluralRu } from "../utils/plural";
 
-const PAGE_SIZE = 3;
+const FAVORITES_PAGE_SIZE = 4;
+const ORDERS_PAGE_SIZE = 3;
 
 function UserPage() {
   const { id } = useParams();
@@ -41,8 +42,8 @@ function UserPage() {
     [profile]
   );
 
-  const favoritePageData = paginate(filteredFavorites, favoritePage, PAGE_SIZE);
-  const orderPageData = paginate(profile?.orders || [], orderPage, PAGE_SIZE);
+  const favoritePageData = paginate(filteredFavorites, favoritePage, FAVORITES_PAGE_SIZE);
+  const orderPageData = paginate(profile?.orders || [], orderPage, ORDERS_PAGE_SIZE);
 
   if (loading) {
     return (
