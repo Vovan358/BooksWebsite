@@ -2,15 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import { getBooks } from "../api/api";
 import BookGrid from "../components/BookGrid";
 import PageSkeleton from "../components/PageSkeleton";
-import Pagination from "../components/Pagination";
 import { useFavorites } from "../context/FavoritesContext";
-import { paginate, PAGE_SIZE, sortBooks } from "../utils/books";
-import { getRecentlyViewed } from "../utils/recentlyViewed";
+import { sortBooks } from "../utils/books";
+import { getRecentlyViewed, syncRecentlyViewed } from "../utils/recentlyViewed";
 
 function MainPage() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
   const [recentlyViewed, setRecentlyViewed] = useState(getRecentlyViewed);
   const { revision: favoritesRevision } = useFavorites();
 
@@ -18,6 +16,7 @@ function MainPage() {
     const load = async () => {
       const data = await getBooks();
       setBooks(data);
+      setRecentlyViewed(syncRecentlyViewed(data));
       setLoading(false);
     };
 
@@ -38,7 +37,12 @@ function MainPage() {
     () => sortBooks(books, "createdAt", "desc"),
     [books]
   );
-  const pageData = paginate(sortedBooks, page, PAGE_SIZE);
+  const newestBooks = sortedBooks.slice(0, 10);
+  const visibleBookIds = useMemo(() => new Set(books.map((book) => book.id)), [books]);
+  const visibleRecentlyViewed = useMemo(
+    () => recentlyViewed.filter((book) => visibleBookIds.has(book.id) && !book.isHidden),
+    [recentlyViewed, visibleBookIds]
+  );
 
   return (
     <main className="page-shell" >
@@ -51,21 +55,13 @@ function MainPage() {
 
       {loading ? (
         <PageSkeleton />
-      ) : pageData.items.length === 0 ? (
+      ) : newestBooks.length === 0 ? (
         <div className="empty-state">Книги не найдены.</div>
       ) : (
-        <>
-          <BookGrid books={pageData.items} leaderSource={books} />
-          <Pagination
-            page={pageData.page}
-            totalPages={pageData.totalPages}
-            onPageChange={setPage}
-            
-          />
-        </>
+        <BookGrid books={newestBooks} leaderSource={books} />
       )}
 
-      {recentlyViewed.length > 0 && (
+      {visibleRecentlyViewed.length > 0 && (
         <section className="recent-section">
           <div className="page-title-row" style = {{marginTop: 10}}>
             <div>
@@ -73,7 +69,7 @@ function MainPage() {
               <p className="page-subtitle" style = {{marginBottom: 20}} >Последние книги, в которые вы заходили.</p>
             </div>
           </div>
-          <BookGrid books={recentlyViewed.slice(0, 10)} leaderSource={books} />
+          <BookGrid books={visibleRecentlyViewed.slice(0, 4)} leaderSource={books} />
         </section>
       )}
     </main>

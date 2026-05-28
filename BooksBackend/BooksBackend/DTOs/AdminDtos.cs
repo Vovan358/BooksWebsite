@@ -93,6 +93,8 @@ public class AdminBookDto
 
     public bool Available { get; set; }
 
+    public bool IsHidden { get; set; }
+
     public string Description { get; set; } = string.Empty;
 
     public string ImageUrl { get; set; } = string.Empty;
@@ -121,4 +123,11 @@ public class AdminBookUpsertDto
     public string Description { get; set; } = string.Empty;
 
     public string ImageUrl { get; set; } = string.Empty;
+
+    public bool IsHidden { get; set; }
+}
+
+public class AdminBookHiddenDto
+{
+    public bool IsHidden { get; set; }
 }

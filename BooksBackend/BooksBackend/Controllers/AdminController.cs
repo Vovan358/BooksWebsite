@@ -212,6 +212,7 @@ public class AdminController : ControllerBase
                 Price = b.Price,
                 Stock = b.Stock,
                 Available = b.Available,
+                IsHidden = b.IsHidden,
                 Description = b.Description,
                 ImageUrl = b.ImageUrl,
                 CreatedAt = b.CreatedAt,
@@ -238,6 +239,7 @@ public class AdminController : ControllerBase
             Price = dto.Price,
             Stock = dto.Stock,
             Available = dto.Stock > 0,
+            IsHidden = dto.IsHidden,
             Description = dto.Description,
             ImageUrl = dto.ImageUrl,
             CreatedAt = DateTime.UtcNow
@@ -267,6 +269,7 @@ public class AdminController : ControllerBase
         book.Price = dto.Price;
         book.Stock = dto.Stock;
         book.Available = dto.Stock > 0;
+        book.IsHidden = dto.IsHidden;
         book.Description = dto.Description;
         book.ImageUrl = dto.ImageUrl;
 
@@ -315,6 +318,21 @@ public class AdminController : ControllerBase
         return NoContent();
     }
 
+    [HttpPatch("books/{id}/hidden")]
+    public async Task<IActionResult> SetBookHidden(int id, [FromBody] AdminBookHiddenDto dto)
+    {
+        var book = await _context.Books.FindAsync(id);
+
+        if (book == null)
+            return NotFound();
+
+        book.IsHidden = dto.IsHidden;
+        await _context.SaveChangesAsync();
+        await _redis.RemoveAsync(BooksCacheKey);
+
+        return Ok(await BuildAdminBook(id));
+    }
+
     private IActionResult? ValidateBookDto(AdminBookUpsertDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Title))
@@ -344,6 +362,7 @@ public class AdminController : ControllerBase
                 Price = b.Price,
                 Stock = b.Stock,
                 Available = b.Available,
+                IsHidden = b.IsHidden,
                 Description = b.Description,
                 ImageUrl = b.ImageUrl,
                 CreatedAt = b.CreatedAt,

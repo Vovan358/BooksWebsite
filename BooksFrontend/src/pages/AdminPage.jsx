@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   clearAdminBookComments,
   createAdminBook,
@@ -10,12 +10,16 @@ import {
   getAdminDashboard,
   getAdminOrders,
   getAdminUsers,
+  setAdminBookHidden,
   updateAdminBook,
 } from "../api/api";
+import { getImageUrl } from "../utils/books";
 import PageSkeleton from "../components/PageSkeleton";
 import Pagination from "../components/Pagination";
 import { useToast } from "../context/ToastContext";
 import { formatRelativeDate } from "../utils/date";
+import { pluralRu } from "../utils/plural";
+import { removeRecentlyViewed } from "../utils/recentlyViewed";
 
 const PAGE_SIZE = 8;
 
@@ -27,6 +31,45 @@ const emptyBookForm = {
   description: "",
   imageUrl: "",
 };
+
+function emitBooksChanged() {
+  window.dispatchEvent(new CustomEvent("books:changed"));
+}
+
+function parseCsvRows(text) {
+  const rows = [];
+  let row = [];
+  let value = "";
+  let insideQuotes = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const next = text[index + 1];
+
+    if (char === '"' && insideQuotes && next === '"') {
+      value += '"';
+      index += 1;
+    } else if (char === '"') {
+      insideQuotes = !insideQuotes;
+    } else if (char === "," && !insideQuotes) {
+      row.push(value.trim());
+      value = "";
+    } else if ((char === "\n" || char === "\r") && !insideQuotes) {
+      if (char === "\r" && next === "\n") index += 1;
+      row.push(value.trim());
+      if (row.some(Boolean)) rows.push(row);
+      row = [];
+      value = "";
+    } else {
+      value += char;
+    }
+  }
+
+  row.push(value.trim());
+  if (row.some(Boolean)) rows.push(row);
+
+  return rows;
+}
 
 function AdminPage() {
   const location = useLocation();
@@ -59,7 +102,7 @@ function AdminPage() {
         <nav>
           <NavLink to="/admin/users">Пользователи</NavLink>
           <NavLink to="/admin/orders">Заказы</NavLink>
-          <NavLink to="/admin/comments">Комментарии</NavLink>
+          <NavLink to="/admin/comments">Отзывы</NavLink>
           <NavLink to="/admin/books">Книги</NavLink>
         </nav>
       </aside>
@@ -83,10 +126,10 @@ function AdminPage() {
 function Dashboard({ dashboard }) {
   const items = [
     ["Выручка", `${dashboard?.revenue ?? 0} ₽`],
-    ["Заказов", dashboard?.ordersCount ?? 0],
-    ["Пользователей", dashboard?.usersCount ?? 0],
-    ["Комментариев", dashboard?.commentsCount ?? 0],
-    ["Куплено книг", dashboard?.booksBought ?? 0],
+    [pluralRu(dashboard?.ordersCount ?? 0, "заказ", "заказа", "заказов"), dashboard?.ordersCount ?? 0],
+    [pluralRu(dashboard?.usersCount ?? 0, "пользователь", "пользователя", "пользователей"), dashboard?.usersCount ?? 0],
+    [pluralRu(dashboard?.commentsCount ?? 0, "отзыв", "отзыва", "отзывов"), dashboard?.commentsCount ?? 0],
+    [pluralRu(dashboard?.booksBought ?? 0, "книга куплена", "книги куплено", "книг куплено"), dashboard?.booksBought ?? 0],
     ["Средний рейтинг", (dashboard?.averageBookRating ?? 0).toFixed(1)],
   ];
 
@@ -139,7 +182,7 @@ function AdminUsers() {
         <thead>
           <tr>
             <th>#</th>
-            <th>Username</th>
+            <th>Пользователь</th>
             <th>Роль</th>
             <th>Создан</th>
           </tr>
@@ -148,7 +191,15 @@ function AdminUsers() {
           {(data?.items || []).map((user, index) => (
             <tr key={user.id}>
               <td>{(data.page - 1) * data.pageSize + index + 1}</td>
-              <td>{user.username}</td>
+              <td>
+                <Link
+                  className="review-author-link"
+                  to={`/users/${user.id}`}
+                  state={{ username: user.username }}
+                >
+                  {user.username}
+                </Link>
+              </td>
               <td>{user.role}</td>
               <td>{formatRelativeDate(user.createdAt)}</td>
             </tr>
@@ -201,17 +252,25 @@ function AdminOrders() {
         <thead>
           <tr>
             <th>#</th>
-            <th>User</th>
-            <th>Date</th>
-            <th>Books</th>
-            <th>Total</th>
+            <th>Пользователь</th>
+            <th>Дата</th>
+            <th>Состав заказа</th>
+            <th>Итого</th>
           </tr>
         </thead>
         <tbody>
           {(data?.items || []).map((order) => (
             <tr key={order.id}>
               <td>{order.id}</td>
-              <td>{order.username}</td>
+              <td>
+                <Link
+                  className="review-author-link"
+                  to={`/users/${order.userId}`}
+                  state={{ username: order.username }}
+                >
+                  {order.username}
+                </Link>
+              </td>
               <td>{formatRelativeDate(order.date)}</td>
               <td>{order.books.map((book) => `${book.title} x${book.quantity}`).join(", ")}</td>
               <td>{order.totalPrice} ₽</td>
@@ -249,7 +308,7 @@ function AdminComments({ onChanged, showToast }) {
 
   return (
     <section className="panel">
-      <AdminTitle title="Комментарии" subtitle="Модерация отзывов и жалоб." />
+      <AdminTitle title="Отзывы" subtitle="Модерация отзывов и жалоб." />
       <div className="toolbar">
         <input
           className="search-input"
@@ -285,12 +344,36 @@ function AdminComments({ onChanged, showToast }) {
               ×
             </button>
             <div className="admin-comment-head">
-              <strong>#{(data.page - 1) * data.pageSize + index + 1}</strong>
-              <span>{comment.username}</span>
-              <span>{comment.bookName}</span>
+              <Link
+                className="review-author-link"
+                to={`/books/${comment.bookId}#comment-${comment.id}`}
+                state={{ from: "/admin/comments", bookTitle: comment.bookName }}
+              >
+                #{(data.page - 1) * data.pageSize + index + 1}
+              </Link>
+              {comment.userId ? (
+                <Link
+                  className="review-author-link"
+                  to={`/users/${comment.userId}`}
+                  state={{ username: comment.username }}
+                >
+                  {comment.username}
+                </Link>
+              ) : (
+                <span>{comment.username}</span>
+              )}
+              <Link
+                className="review-author-link"
+                to={`/books/${comment.bookId}`}
+                state={{ from: "/admin/comments", bookTitle: comment.bookName }}
+              >
+                {comment.bookName}
+              </Link>
               {comment.hasReports && <span className="report-badge">Жалоба</span>}
             </div>
-            <p>{comment.description}</p>
+            <p className="admin-comment-text" title={comment.description}>
+              {comment.description}
+            </p>
             <div className="button-row">
               <span className="muted">Оценка: {comment.rating}/10</span>
               <span className={`comment-score ${comment.commentRating > 0 ? "comment-score-positive" : comment.commentRating < 0 ? "comment-score-negative" : ""}`}>
@@ -306,6 +389,8 @@ function AdminComments({ onChanged, showToast }) {
 }
 
 function AdminBooks({ onChanged, showToast }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [data, setData] = useState(null);
@@ -323,14 +408,6 @@ function AdminBooks({ onChanged, showToast }) {
 
   useEffect(load, [page, search]);
 
-  useEffect(() => {
-    if (!menuBookId) return;
-    const close = () => setMenuBookId(null);
-    document.addEventListener("click", close);
-    return () => document.removeEventListener("click", close);
-  }, [menuBookId]);
-
-  const openCreate = () => setEditingBook({ ...emptyBookForm });
   const openEdit = (book) =>
     setEditingBook({
       id: book.id,
@@ -340,9 +417,40 @@ function AdminBooks({ onChanged, showToast }) {
       stock: book.stock,
       description: book.description,
       imageUrl: book.imageUrl,
+      isHidden: book.isHidden,
     });
 
+  useEffect(() => {
+    const editBookId = Number(location.state?.editBookId);
+    if (!editBookId || !data?.items) return;
+
+    const book = data.items.find((item) => item.id === editBookId);
+    if (book) {
+      openEdit(book);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [data, location.pathname, location.state, navigate]);
+
+  useEffect(() => {
+    if (!menuBookId) return;
+    const close = () => setMenuBookId(null);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [menuBookId]);
+
+  const openCreate = () => setEditingBook({ ...emptyBookForm });
+
   const saveBook = async (book) => {
+    if (!book.title.trim()) {
+      showToast("Заполните название книги.", "error");
+      return;
+    }
+
+    if (!book.author.trim()) {
+      showToast("Заполните автора книги.", "error");
+      return;
+    }
+
     if (book.id) {
       await updateAdminBook(book.id, book);
       showToast("Книга обновлена.");
@@ -350,6 +458,7 @@ function AdminBooks({ onChanged, showToast }) {
       await createAdminBook(book);
       showToast("Книга создана.");
     }
+    emitBooksChanged();
     setEditingBook(null);
     await onChanged();
     load();
@@ -359,12 +468,72 @@ function AdminBooks({ onChanged, showToast }) {
     try {
       await deleteAdminBook(deleteTarget.id);
       showToast("Книга удалена.");
+      removeRecentlyViewed(deleteTarget.id);
+      window.dispatchEvent(
+        new CustomEvent("book:deleted", {
+          detail: { bookId: deleteTarget.id },
+        })
+      );
+      emitBooksChanged();
       setDeleteTarget(null);
       await onChanged();
       load();
     } catch (error) {
-      showToast(error.message || "Не удалось удалить книгу.", "error");
+      const hasOrders = (error.message || "").includes("orders");
+      showToast(
+        hasOrders
+          ? "Книгу нельзя удалить: по ней уже есть заказы."
+          : "Не удалось удалить книгу.",
+        "error"
+      );
     }
+  };
+
+  const toggleHidden = async (book) => {
+    await setAdminBookHidden(book.id, !book.isHidden);
+    showToast(book.isHidden ? "Книга снова продаётся." : "Продажи книги прекращены.");
+    emitBooksChanged();
+    await onChanged();
+    load();
+  };
+
+  const importCsv = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const text = await file.text();
+    const [headers, ...lines] = parseCsvRows(text);
+    if (!headers?.length) {
+      showToast("CSV-файл пустой или без заголовков.", "error");
+      event.target.value = "";
+      return;
+    }
+
+    let imported = 0;
+
+    for (const values of lines) {
+      const row = Object.fromEntries(headers.map((header, index) => [header, values[index] || ""]));
+      const book = {
+        title: row.title || row.Title || row.name || row.Name || "",
+        author: row.author || row.Author || "",
+        price: Number(row.price || row.Price || 0),
+        stock: Number(row.stock || row.Stock || 0),
+        description: row.description || row.Description || "",
+        imageUrl: row.imageUrl || row.ImageUrl || "",
+        isHidden: false,
+      };
+
+      if (book.title && book.author) {
+        await createAdminBook(book);
+        imported += 1;
+      }
+    }
+
+    showToast(`Импортировано книг: ${imported}.`);
+    emitBooksChanged();
+    await onChanged();
+    load();
+    event.target.value = "";
   };
 
   const clearComments = async (bookId) => {
@@ -387,9 +556,15 @@ function AdminBooks({ onChanged, showToast }) {
             setPage(1);
           }}
         />
-        <button className="btn btn-primary" onClick={openCreate}>
-          Создать книгу
-        </button>
+        <div className="button-row">
+          <label className="btn btn-ghost file-import-button">
+            Импорт CSV
+            <input type="file" accept=".csv,text/csv" onChange={importCsv} />
+          </label>
+          <button className="btn btn-primary" onClick={openCreate}>
+            Создать книгу
+          </button>
+        </div>
       </div>
       {loading ? <PageSkeleton /> : <table className="data-table admin-books-table">
         <thead>
@@ -405,9 +580,17 @@ function AdminBooks({ onChanged, showToast }) {
         </thead>
         <tbody>
           {(data?.items || []).map((book, index) => (
-            <tr key={book.id}>
+            <tr className={book.isHidden ? "admin-hidden-book-row" : ""} key={book.id}>
               <td>{book.id}</td>
-              <td>{book.bookName}</td>
+              <td>
+                <Link
+                  className="review-author-link"
+                  to={`/books/${book.id}`}
+                  state={{ from: "/admin/books", bookTitle: book.bookName }}
+                >
+                  {book.bookName}
+                </Link>
+              </td>
               <td>{book.author}</td>
               <td>{book.rating.toFixed(1)}</td>
               <td>{book.orders}</td>
@@ -425,6 +608,9 @@ function AdminBooks({ onChanged, showToast }) {
                 {menuBookId === book.id && (
                   <div className="admin-row-menu" onClick={(event) => event.stopPropagation()}>
                     <button onClick={() => openEdit(book)}>Редактировать</button>
+                    <button onClick={() => toggleHidden(book)}>
+                      {book.isHidden ? "Показать" : "Скрыть"}
+                    </button>
                     <button onClick={() => setDeleteTarget(book)}>Удалить</button>
                   </div>
                 )}
@@ -446,10 +632,14 @@ function AdminBooks({ onChanged, showToast }) {
 
       {deleteTarget && (
         <div className="admin-modal-overlay">
+          
           <section className="panel admin-modal">
             <h2>Удалить книгу?</h2>
-            <p className="page-subtitle">
-              Вы точно хотите удалить книгу "{deleteTarget.bookName}" с маркетплейса?
+            
+            <p className="page-subtitle" style={{marginBottom: 10}}>
+            
+              Вы точно хотите удалить книгу "{deleteTarget.bookName}" с маркетплейса?<br />
+              Внимание! Удалить можно только ту книгу, которую ещё не заказывали!
             </p>
             <div className="button-row">
               <button className="btn btn-danger" onClick={removeBook}>Удалить</button>
@@ -485,11 +675,11 @@ function BookEditor({ book, onClose, onSave, onClearComments }) {
         <h2>{isExisting ? "Редактировать книгу" : "Создать книгу"}</h2>
         <div className="profile-form-grid">
           <label>
-            Название
+            <span>Название<span className="required-mark">*</span></span>
             <input className="form-input" value={form.title} onChange={(event) => update("title", event.target.value)} />
           </label>
           <label>
-            Автор
+            <span>Автор<span className="required-mark">*</span></span>
             <input className="form-input" value={form.author} onChange={(event) => update("author", event.target.value)} />
           </label>
           <label>
@@ -502,15 +692,33 @@ function BookEditor({ book, onClose, onSave, onClearComments }) {
           </label>
           <label className="profile-form-wide">
             Обложка
-            <input className="form-input" value={form.imageUrl} onChange={(event) => update("imageUrl", event.target.value)} />
+            <input
+              className="form-input"
+              placeholder="URL обложки или data:image..."
+              value={form.imageUrl.startsWith("data:image") ? "Изображение загружено с компьютера" : form.imageUrl}
+              onChange={(event) => update("imageUrl", event.target.value)}
+            />
           </label>
           <label className="profile-form-wide">
             Загрузить обложку с компьютера
             <input className="form-input" type="file" accept="image/*" onChange={uploadCover} />
           </label>
+          {form.imageUrl && (
+            <img
+              className="admin-cover-preview"
+              src={getImageUrl(form)}
+              alt="Предпросмотр обложки"
+            />
+          )}
           <label className="profile-form-wide">
             Описание
-            <textarea className="form-textarea" value={form.description} onChange={(event) => update("description", event.target.value)} />
+            <textarea
+              className="form-textarea"
+              maxLength={1000}
+              value={form.description}
+              onChange={(event) => update("description", event.target.value)}
+            />
+            <span className="muted">{form.description.length}/1000</span>
           </label>
         </div>
         <div className="button-row admin-modal-actions">

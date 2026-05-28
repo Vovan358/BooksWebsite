@@ -355,6 +355,48 @@
         }
       }
     },
+    "/api/Admin/books/{id}/hidden": {
+      "patch": {
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminBookHiddenDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminBookHiddenDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminBookHiddenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Auth/register": {
       "post": {
         "tags": [
@@ -1012,6 +1054,15 @@
   },
   "components": {
     "schemas": {
+      "AdminBookHiddenDto": {
+        "type": "object",
+        "properties": {
+          "isHidden": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "AdminBookUpsertDto": {
         "type": "object",
         "properties": {
@@ -1038,6 +1089,9 @@
           "imageUrl": {
             "type": "string",
             "nullable": true
+          },
+          "isHidden": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1061,6 +1115,9 @@
             "nullable": true
           },
           "available": {
+            "type": "boolean"
+          },
+          "isHidden": {
             "type": "boolean"
           },
           "price": {

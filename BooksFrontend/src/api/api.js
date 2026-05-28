@@ -185,6 +185,12 @@ export const deleteAdminBook = (id) =>
     method: "DELETE",
   });
 
+export const setAdminBookHidden = (id, isHidden) =>
+  request(`/admin/books/${id}/hidden`, {
+    method: "PATCH",
+    body: JSON.stringify({ isHidden }),
+  });
+
 export const clearAdminBookComments = (id) =>
   request(`/admin/books/${id}/comments`, {
     method: "DELETE",

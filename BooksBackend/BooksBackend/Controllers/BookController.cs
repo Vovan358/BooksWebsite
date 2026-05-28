@@ -42,6 +42,7 @@ public class BookController : ControllerBase
             Console.WriteLine("❄ REDIS CACHE MISS");
 
             var books = await BuildBooksQuery()
+                .Where(b => !b.IsHidden)
                 .ToListAsync();
 
             var serialized = JsonSerializer.Serialize(books);
@@ -150,6 +151,7 @@ public class BookController : ControllerBase
                 Title = b.Title,
                 Author = b.Author,
                 Available = b.Available,
+                IsHidden = b.IsHidden,
                 Price = b.Price,
                 Stock = b.Stock,
                 Description = b.Description,

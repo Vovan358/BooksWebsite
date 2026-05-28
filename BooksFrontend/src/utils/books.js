@@ -3,6 +3,7 @@ export const PAGE_SIZE = 6;
 export function getImageUrl(book) {
   if (!book?.imageUrl) return "https://via.placeholder.com/240x320?text=No+Image";
   if (book.imageUrl.startsWith("http")) return book.imageUrl;
+  if (book.imageUrl.startsWith("data:image")) return book.imageUrl;
   return `https://localhost:7149${book.imageUrl}`;
 }
 

@@ -43,11 +43,13 @@ function CommentForm({ book, hasReviewed, onAdd }) {
       <textarea
         className="form-textarea"
         placeholder="Ваш отзыв"
+        maxLength={1000}
         value={text}
         onChange={(e) => setText(e.target.value)}
         required
         rows={4}
       />
+      <span className="muted">{text.length}/1000</span>
       <input
         className="form-input"
         type="number"

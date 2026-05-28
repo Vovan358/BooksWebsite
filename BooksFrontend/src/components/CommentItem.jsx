@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
 import { formatRelativeDate } from "../utils/date";
 
 function CommentItem({ comment, canDelete = false, onDelete, onReport, onVote }) {
   const { profile } = useProfile();
+  const [expanded, setExpanded] = useState(false);
   const score = comment.score || 0;
   const scoreClass =
     score > 0 ? "comment-score-positive" : score < 0 ? "comment-score-negative" : "";
@@ -21,7 +23,10 @@ function CommentItem({ comment, canDelete = false, onDelete, onReport, onVote })
   );
 
   return (
-    <article className={`review-item ${isOwnComment ? "is-own-comment" : ""}`}>
+    <article
+      className={`review-item ${isOwnComment ? "is-own-comment" : ""}`}
+      id={`comment-${comment.id}`}
+    >
       {canDelete && (
         <button
           className="comment-delete-button"
@@ -39,7 +44,19 @@ function CommentItem({ comment, canDelete = false, onDelete, onReport, onVote })
         {comment.createdAt &&
           <span className="muted"> • {formatRelativeDate(comment.createdAt)}</span>}
       </div>
-      <p className="page-subtitle">{comment.text}</p>
+      <div className={`comment-text-box ${expanded ? "is-expanded" : ""}`}>
+        <p className="page-subtitle">{comment.text}</p>
+        {(comment.text || "").length > 260 && (
+          <button
+            className="description-toggle"
+            type="button"
+            onClick={() => setExpanded((current) => !current)}
+            style = {{marginBottom: -10}}
+          >
+            {expanded ? "Меньше" : "Больше"}
+          </button>
+        )}
+      </div>
       <div className="review-actions">
         <span className="price">Оценка: {comment.rating}/10</span>
         <div className="comment-vote-control" aria-label="Рейтинг комментария">

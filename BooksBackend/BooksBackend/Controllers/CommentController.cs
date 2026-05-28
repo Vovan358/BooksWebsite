@@ -72,6 +72,9 @@ public class CommentController : ControllerBase
         if (comment.Rating < 0 || comment.Rating > 10)
             return BadRequest("Rating must be between 0 and 10");
 
+        if (comment.Text.Length > 1000)
+            return BadRequest("Comment text cannot be longer than 1000 characters");
+
         var alreadyCommented = await _context.Comments
             .AnyAsync(c => c.BookId == comment.BookId && c.UserId == userId);
 

@@ -96,6 +96,27 @@
   },
   {
     "ContainingType": "AdminController",
+    "Method": "SetBookHidden",
+    "RelativePath": "api/Admin/books/{id}/hidden",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "AdminBookHiddenDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AdminController",
     "Method": "GetComments",
     "RelativePath": "api/Admin/comments",
     "HttpMethod": "GET",

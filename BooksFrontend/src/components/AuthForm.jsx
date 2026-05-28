@@ -2,14 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { loginRequest, registerRequest } from "../api/api";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 function AuthForm({ variant = "modal", onSuccess, onCancel }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { showToast } = useToast();
   const [mode, setMode] = useState("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
@@ -50,6 +53,7 @@ function AuthForm({ variant = "modal", onSuccess, onCancel }) {
       } else {
         await registerRequest(username, password);
         data = await loginRequest(username, password);
+        showToast("Поздравляем с созданием аккаунта!");
       }
 
       await login(data.token, data.username);
@@ -90,18 +94,40 @@ function AuthForm({ variant = "modal", onSuccess, onCancel }) {
         value={username}
         onChange={(event) => setUsername(event.target.value)}
         onKeyDown={(event) => {
-          if (event.key === "Enter") passwordRef.current?.focus();
+          if (event.key === "Enter" || event.key === "ArrowDown") {
+            event.preventDefault();
+            passwordRef.current?.focus();
+          }
         }}
       />
 
-      <input
-        className="form-input"
-        ref={passwordRef}
-        type="password"
-        placeholder="Пароль"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-      />
+      <label className="password-field">
+        <input
+          className="form-input"
+          ref={passwordRef}
+          type={showPassword ? "text" : "password"}
+          placeholder="Пароль"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && password.length === 0) {
+              event.preventDefault();
+            }
+            if (event.key === "ArrowUp") {
+              event.preventDefault();
+              usernameRef.current?.focus();
+            }
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword((current) => !current)}
+          aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+          title={showPassword ? "Скрыть пароль" : "Показать пароль"}
+        >
+          {showPassword ? "◉" : "○"}
+        </button>
+      </label>
 
       {error && <p className="auth-error">{error}</p>}
 

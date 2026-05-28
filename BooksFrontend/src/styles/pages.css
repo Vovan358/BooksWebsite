@@ -498,6 +498,10 @@
   background: #1f2028;
 }
 
+.book-detail-info {
+  align-self: stretch;
+}
+
 .book-detail-badge {
   max-width: 150px;
   font-size: 13px;
@@ -516,6 +520,13 @@
   letter-spacing: 0;
 }
 
+.book-title-line {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -528,6 +539,16 @@
   border-radius: 8px;
   padding: 12px;
   background: #1f2028;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.stat-tile:hover {
+  transform: scale(1.035);
+  border-color: rgba(255, 167, 38, 0.42);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
 }
 
 .stat-value {
@@ -584,6 +605,10 @@
 .empty-stat {
   color: #e53935;
   font-weight: 900;
+}
+
+.neutral-empty-stat {
+  color: #aeb5c2;
 }
 
 .stat-label {
@@ -855,9 +880,92 @@
 }
 
 .recent-section {
-  margin-top: 36px;
-  padding-top: 22px;
+  margin-top: 56px;
+  padding-top: 30px;
   border-top: 1px solid #343642;
+}
+
+.recommendation-section {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #343642;
+}
+
+.book-description-box {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 14px 14px 46px;
+  border: 1px solid #3f4150;
+  border-radius: 8px;
+  background: #1f2028;
+}
+
+.book-description-box h2 {
+  margin: 0;
+}
+
+.book-description-box p {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #c9cfda;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.book-description-box.is-expanded p {
+  display: block;
+  overflow: visible;
+}
+
+.description-toggle {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  min-height: 30px;
+  margin: 0;
+  padding: 5px 16px;
+  border-radius: 999px;
+  background: #2f3140;
+  color: #f3f4f6;
+  font-weight: 900;
+  transform: translateX(-50%);
+}
+
+.description-toggle:hover {
+  background: #3a3d4f;
+}
+
+.password-field {
+  position: relative;
+  display: block;
+}
+
+.password-field .form-input {
+  padding-right: 46px;
+}
+
+.password-field button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  margin: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #c9cfda;
+  transform: translateY(-50%);
+}
+
+.password-field button:hover {
+  background: #2f3140;
 }
 
 .order-summary-side {
@@ -880,6 +988,10 @@
   font-size: 28px;
   font-weight: 900;
   box-shadow: 0 10px 24px rgba(67, 160, 71, 0.24);
+}
+
+.book-price-badge.is-stopped {
+  background: linear-gradient(135deg, #c62828, #8e1717);
 }
 
 .book-price-row {
@@ -1101,6 +1213,25 @@
 
 .comment-delete-button:hover {
   background: #c62828;
+}
+
+.comment-text-box {
+  position: relative;
+  padding-bottom: 34px;
+}
+
+.comment-text-box p {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.comment-text-box.is-expanded p {
+  display: block;
+  overflow: visible;
 }
 
 .review-header {
@@ -1388,10 +1519,12 @@
 .admin-comment-list {
   display: grid;
   gap: 10px;
+  min-width: 0;
 }
 
 .admin-comment-card {
   position: relative;
+  min-width: 0;
   border: 1px solid #343642;
   border-radius: 8px;
   background: #1f2028;
@@ -1410,6 +1543,22 @@
   gap: 10px;
   margin-bottom: 8px;
   color: #ffffff;
+}
+
+.admin-comment-text {
+  display: block;
+  width: 75ch;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  color: #c9cfda;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-hidden-book-row {
+  opacity: 0.58;
+  background: rgba(0, 0, 0, 0.18);
 }
 
 .report-badge {
@@ -1483,6 +1632,33 @@
   margin-top: 16px;
 }
 
+.admin-cover-preview {
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border: 1px solid #3f4150;
+  border-radius: 8px;
+  background: #1f2028;
+}
+
+.required-mark {
+  color: #e53935;
+  font-weight: 900;
+}
+
+
+.file-import-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.file-import-button input {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  opacity: 0;
+}
+
 .checkout-success-panel {
   display: grid;
   justify-items: center;
@@ -1498,6 +1674,7 @@
 :root[data-theme="light"] .admin-comment-card,
 :root[data-theme="light"] .delivery-panel,
 :root[data-theme="light"] .description-field,
+:root[data-theme="light"] .book-description-box,
 :root[data-theme="light"] .auth-modal {
   background: #ffffff;
   border-color: #d8deea;
@@ -1534,6 +1711,16 @@
 :root[data-theme="light"] .admin-row-menu button,
 :root[data-theme="light"] .description-field p {
   color: #111827;
+}
+
+:root[data-theme="light"] .book-description-box p {
+  color: #374151;
+}
+
+:root[data-theme="light"] .description-toggle,
+:root[data-theme="light"] .password-field button {
+  color: #111827;
+  background: #eef2f7;
 }
 
 :root[data-theme="light"] .admin-row-menu button:hover,

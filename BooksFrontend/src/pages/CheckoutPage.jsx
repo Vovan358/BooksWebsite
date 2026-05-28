@@ -79,7 +79,6 @@ function CheckoutPage() {
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(checkoutInfo.email)
     ) {
       const message = "Введите корректный email.";
-      setError(message);
       showToast(message, "error");
       return;
     }
@@ -95,7 +94,6 @@ function CheckoutPage() {
       ].some((value) => !value.trim())
     ) {
       const message = "Заполните все поля адреса доставки.";
-      setError(message);
       showToast(message, "error");
       return;
     }
@@ -193,7 +191,7 @@ function CheckoutPage() {
             <section className="checkout-details">
               <div className="profile-form-grid">
                 <label className="profile-form-wide">
-                  Email
+                  <span>Email<span className="required-mark">*</span></span>
                   <input
                     className="form-input"
                     type="email"
@@ -227,7 +225,7 @@ function CheckoutPage() {
                   <h2>Адрес</h2>
                   <div className="profile-form-grid">
                     <label>
-                      Страна
+                      <span>Страна<span className="required-mark">*</span></span>
                       <input
                         className="form-input"
                         disabled={isPickup}
@@ -238,7 +236,7 @@ function CheckoutPage() {
                       />
                     </label>
                     <label>
-                      Город
+                      <span>Город<span className="required-mark">*</span></span>
                       <input
                         className="form-input"
                         disabled={isPickup}
@@ -249,7 +247,7 @@ function CheckoutPage() {
                       />
                     </label>
                     <label>
-                      Улица
+                      <span>Улица<span className="required-mark">*</span></span>
                       <input
                         className="form-input"
                         disabled={isPickup}
@@ -260,7 +258,7 @@ function CheckoutPage() {
                       />
                     </label>
                     <label>
-                      Дом
+                      <span>Дом<span className="required-mark">*</span></span>
                       <input
                         className="form-input"
                         disabled={isPickup}
@@ -271,7 +269,7 @@ function CheckoutPage() {
                       />
                     </label>
                     <label>
-                      Квартира
+                      <span>Квартира<span className="required-mark">*</span></span>
                       <input
                         className="form-input"
                         disabled={isPickup}

@@ -8,6 +8,8 @@ public class BookResponseDto
 
     public bool Available { get; set; }
 
+    public bool IsHidden { get; set; }
+
     public int Price { get; set; }
 
     public int Stock { get; set; }

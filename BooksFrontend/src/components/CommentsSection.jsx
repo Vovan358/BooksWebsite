@@ -112,10 +112,26 @@ function CommentsSection({ book, onChanged }) {
   }, [sortBy, comments.length]);
 
   const totalPages = Math.max(1, Math.ceil(sortedComments.length / COMMENT_PAGE_SIZE));
+  useEffect(() => {
+    if (!window.location.hash) return;
+    const targetId = Number(window.location.hash.replace("#comment-", ""));
+    const index = sortedComments.findIndex((comment) => comment.id === targetId);
+    if (index >= 0) {
+      setPage(Math.floor(index / COMMENT_PAGE_SIZE) + 1);
+    }
+  }, [sortedComments]);
+
   const visibleComments = sortedComments.slice(
     (page - 1) * COMMENT_PAGE_SIZE,
     page * COMMENT_PAGE_SIZE
   );
+  useEffect(() => {
+    if (!window.location.hash || visibleComments.length === 0) return;
+    window.setTimeout(() => {
+      const target = document.querySelector(window.location.hash);
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 0);
+  }, [page, visibleComments]);
   const hasReviewed = Boolean(
     profile?.userId && comments.some((comment) => comment.userId === profile.userId)
   );

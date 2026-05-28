@@ -1,5 +1,9 @@
 export function formatRelativeDate(value) {
-  const date = new Date(value);
+  const normalizedValue =
+    typeof value === "string" && !/[zZ]|[+-]\d{2}:\d{2}$/.test(value)
+      ? `${value}Z`
+      : value;
+  const date = new Date(normalizedValue);
   if (Number.isNaN(date.getTime())) return "";
 
   const now = new Date();

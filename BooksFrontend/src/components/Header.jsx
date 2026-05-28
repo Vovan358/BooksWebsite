@@ -27,9 +27,11 @@ function Header() {
     };
 
     loadBooksCount();
+    window.addEventListener("books:changed", loadBooksCount);
 
     return () => {
       ignore = true;
+      window.removeEventListener("books:changed", loadBooksCount);
     };
   }, []);
 

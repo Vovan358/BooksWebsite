@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getMyOrders, getMyStats } from "../api/api";
 import BookGrid from "../components/BookGrid";
 import Pagination from "../components/Pagination";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useFavorites } from "../context/FavoritesContext";
 import { useProfile } from "../context/ProfileContext";
@@ -10,6 +11,7 @@ import { filterBooks, getImageUrl, paginate } from "../utils/books";
 import { formatRelativeDate } from "../utils/date";
 import { formatAddress } from "../utils/delivery";
 import { PICKUP_POINTS } from "../utils/pickupPoints";
+import { pluralRu } from "../utils/plural";
 
 const PERSONAL_PAGE_SIZE = 3;
 
@@ -64,6 +66,7 @@ function filterOrders(orders, search) {
 
 function PersonalPage() {
   const { user, logout, openAuth } = useAuth();
+  const navigate = useNavigate();
   const { favorites, refreshFavorites } = useFavorites();
   const { profile, loading: profileLoading, saveProfile } = useProfile();
   const [orders, setOrders] = useState([]);
@@ -222,7 +225,13 @@ function PersonalPage() {
           </span>
         </div>
 
-        <button className="btn btn-danger" onClick={logout}>
+        <button
+          className="btn btn-danger"
+          onClick={async () => {
+            await logout();
+            navigate("/auth", { replace: true });
+          }}
+        >
           Выйти из аккаунта
         </button>
 
@@ -230,11 +239,15 @@ function PersonalPage() {
           <div className="stat-grid personal-stat-grid">
             <div className="stat-tile">
               <span className="stat-value">{stats.ordersCount}</span>
-              <span className="stat-label">Заказов</span>
+              <span className="stat-label">
+                {pluralRu(stats.ordersCount, "заказ", "заказа", "заказов")}
+              </span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">{stats.booksBought}</span>
-              <span className="stat-label">Куплено</span>
+              <span className="stat-label">
+                {stats.booksBought === 1 ? "книга куплена" : "книг куплено"}
+              </span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">{stats.moneySpent} ₽</span>
@@ -242,7 +255,9 @@ function PersonalPage() {
             </div>
             <div className="stat-tile">
               <span className="stat-value">{stats.commentsLeft}</span>
-              <span className="stat-label">Отзывов</span>
+              <span className="stat-label">
+                {pluralRu(stats.commentsLeft, "отзыв", "отзыва", "отзывов")}
+              </span>
             </div>
           </div>
         )}

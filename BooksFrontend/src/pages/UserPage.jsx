@@ -6,6 +6,7 @@ import Pagination from "../components/Pagination";
 import { filterBooks, getImageUrl, paginate } from "../utils/books";
 import { formatRelativeDate } from "../utils/date";
 import { formatAddress } from "../utils/delivery";
+import { pluralRu } from "../utils/plural";
 
 const PAGE_SIZE = 3;
 
@@ -15,7 +16,6 @@ function UserPage() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [favoriteSearch, setFavoriteSearch] = useState("");
   const [favoritePage, setFavoritePage] = useState(1);
   const [orderPage, setOrderPage] = useState(1);
 
@@ -36,13 +36,9 @@ function UserPage() {
     load();
   }, [id]);
 
-  useEffect(() => {
-    setFavoritePage(1);
-  }, [favoriteSearch]);
-
   const filteredFavorites = useMemo(
-    () => filterBooks(profile?.favoriteBooks || [], favoriteSearch),
-    [favoriteSearch, profile]
+    () => filterBooks(profile?.favoriteBooks || [], ""),
+    [profile]
   );
 
   const favoritePageData = paginate(filteredFavorites, favoritePage, PAGE_SIZE);
@@ -94,11 +90,15 @@ function UserPage() {
           <div className="stat-grid">
             <div className="stat-tile">
               <span className="stat-value">{profile.stats.ordersCount}</span>
-              <span className="stat-label">Заказов</span>
+              <span className="stat-label">
+                {pluralRu(profile.stats.ordersCount, "заказ", "заказа", "заказов")}
+              </span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">{profile.stats.booksBought}</span>
-              <span className="stat-label">Куплено книг</span>
+              <span className="stat-label">
+                {profile.stats.booksBought === 1 ? "книга куплена" : "книг куплено"}
+              </span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">{profile.stats.moneySpent} ₽</span>
@@ -106,7 +106,9 @@ function UserPage() {
             </div>
             <div className="stat-tile">
               <span className="stat-value">{profile.stats.commentsLeft}</span>
-              <span className="stat-label">Отзывов</span>
+              <span className="stat-label">
+                {pluralRu(profile.stats.commentsLeft, "отзыв", "отзыва", "отзывов")}
+              </span>
             </div>
           </div>
         ) : (
@@ -118,22 +120,16 @@ function UserPage() {
         <div className="page-title-row">
           <div>
             <h1>Избранное</h1>
-            <p className="page-subtitle">Книги, которые сохранил пользователь.</p>
+            <p className="page-subtitle">
+              {filteredFavorites.length}{" "}
+              {pluralRu(filteredFavorites.length, "книга", "книги", "книг")},
+              {filteredFavorites.length === 1 ? " которую" : " которые"} сохранил пользователь.
+            </p>
           </div>
         </div>
 
         {profile.canViewFavorites ? (
           <>
-            <div className="toolbar">
-              <input
-                className="search-input"
-                type="search"
-                placeholder="Поиск по избранному"
-                value={favoriteSearch}
-                onChange={(event) => setFavoriteSearch(event.target.value)}
-              />
-              <span className="muted">Найдено: {filteredFavorites.length}</span>
-            </div>
             {favoritePageData.items.length === 0 ? (
               <div className="empty-state">В избранном пока нет книг.</div>
             ) : (

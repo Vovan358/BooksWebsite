@@ -3,6 +3,7 @@ import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import { useToast } from "../context/ToastContext";
 import { getBookBadge, getImageUrl, getRatingClass } from "../utils/books";
+import { pluralRu } from "../utils/plural";
 
 function BookGrid({ books, leaderSource = books }) {
   const { items, addToCart, removeFromCart } = useCart();
@@ -90,12 +91,17 @@ function BookGrid({ books, leaderSource = books }) {
                 <h3>{book.title}</h3>
                 <p className="muted">{book.author}</p>
                 <div className="book-meta">
-                  <span>
-                    <strong className={`rating-value ${getRatingClass(rating)}`}>
-                      {rating.toFixed(1)}
-                    </strong>{" "}
-                    ({book.commentsNumber || 0} оценок)
-                  </span>
+                  {(book.commentsNumber || 0) > 0 ? (
+                    <span>
+                      <strong className={`rating-value ${getRatingClass(rating)}`}>
+                        {rating.toFixed(1)}
+                      </strong>{" "}
+                      ({book.commentsNumber}{" "}
+                      {pluralRu(book.commentsNumber, "оценка", "оценки", "оценок")})
+                    </span>
+                  ) : (
+                    <span className="muted">(пока нет оценок)</span>
+                  )}
                 </div>
               </div>
               <div className="button-row">

@@ -43,6 +43,19 @@ export function FavoritesProvider({ children }) {
     refreshFavorites();
   }, [refreshFavorites]);
 
+  useEffect(() => {
+    const handleBookDeleted = (event) => {
+      const bookId = Number(event.detail?.bookId);
+      if (!bookId) return;
+
+      setFavorites((prev) => prev.filter((book) => book.id !== bookId));
+      setRevision((current) => current + 1);
+    };
+
+    window.addEventListener("book:deleted", handleBookDeleted);
+    return () => window.removeEventListener("book:deleted", handleBookDeleted);
+  }, []);
+
   const isFavorite = useCallback(
     (bookId) => favoriteIds.has(bookId),
     [favoriteIds]
