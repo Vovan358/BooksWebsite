@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const labels = {
   "": "Новинки",
@@ -14,6 +15,7 @@ const labels = {
 
 function Breadcrumbs() {
   const location = useLocation();
+  const { user } = useAuth();
   const parts = location.pathname.split("/").filter(Boolean);
 
   if (location.pathname === "/") return null;
@@ -31,6 +33,39 @@ function Breadcrumbs() {
           <span>/</span>
           <span>{bookTitle}</span>
         </span>
+      </nav>
+    );
+  }
+
+  if (parts[0] === "users" && parts[1]) {
+    return (
+      <nav className="breadcrumbs" aria-label="Навигационная цепочка">
+        <Link to={user ? "/personal" : "/auth"}>Профиль</Link>
+        <span className="breadcrumb-part">
+          <span>/</span>
+          <span>{location.state?.username || `Пользователь #${parts[1]}`}</span>
+        </span>
+      </nav>
+    );
+  }
+
+  if (parts[0] === "admin") {
+    const adminLabels = {
+      users: "Пользователи",
+      orders: "Заказы",
+      comments: "Комментарии",
+      books: "Книги",
+    };
+
+    return (
+      <nav className="breadcrumbs" aria-label="Навигационная цепочка">
+        <Link to="/admin">Админ-панель</Link>
+        {parts[1] && (
+          <span className="breadcrumb-part">
+            <span>/</span>
+            <span>{adminLabels[parts[1]] || parts[1]}</span>
+          </span>
+        )}
       </nav>
     );
   }

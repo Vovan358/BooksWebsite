@@ -24,6 +24,7 @@ function CheckoutPage() {
   const { profile } = useProfile();
   const { showToast } = useToast();
   const [success, setSuccess] = useState(false);
+  const [successTotal, setSuccessTotal] = useState(0);
   const [error, setError] = useState("");
   const [syncNotice, setSyncNotice] = useState("");
   const [deliveryType, setDeliveryType] = useState("home");
@@ -64,16 +65,6 @@ function CheckoutPage() {
       pickupPoint,
     });
   }, [profile]);
-
-  useEffect(() => {
-    if (!success) return;
-
-    const timer = setTimeout(() => {
-      navigate("/");
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [success, navigate]);
 
   const handleCheckout = async () => {
     setError("");
@@ -119,6 +110,7 @@ function CheckoutPage() {
           deliveryAddress: getCheckoutDeliveryAddress(checkoutInfo, deliveryType),
         }
       );
+      setSuccessTotal(totalPrice);
       clearCart();
       setSuccess(true);
       showToast("Заказ оформлен!");
@@ -147,10 +139,19 @@ function CheckoutPage() {
         </Link>
       </div>
 
-      {error && <div className="notice">{error}</div>}
       {syncNotice && <div className="notice">{syncNotice}</div>}
 
-      <section className="panel">
+      {success && (
+        <section className="panel checkout-success-panel">
+          <h1>Спасибо за заказ!</h1>
+          <span className="book-price-badge">{successTotal} ₽</span>
+          <Link className="btn btn-primary" to="/">
+            На главную
+          </Link>
+        </section>
+      )}
+
+      {!success && <section className="panel">
         <h2>Сводка о заказе</h2>
         {items.length === 0 ? (
           <p className="page-subtitle">Корзина пуста.</p>
@@ -316,7 +317,7 @@ function CheckoutPage() {
             </button>
           </>
         )}
-      </section>
+      </section>}
     </main>
   );
 }

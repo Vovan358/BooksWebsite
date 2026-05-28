@@ -6,9 +6,13 @@ export function formatRelativeDate(value) {
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const diffDays = Math.floor((startOfToday - startOfDate) / 86400000);
+  const time = date.toLocaleTimeString("ru-RU", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
-  if (diffDays === 0) return "Сегодня";
-  if (diffDays === 1) return "Вчера";
+  if (diffDays === 0) return `Сегодня, ${time}`;
+  if (diffDays === 1) return `Вчера, ${time}`;
   if (diffDays < 7) return `${diffDays} дня назад`;
   if (diffDays < 14) return "Неделю назад";
   if (diffDays < 31) return `${Math.floor(diffDays / 7)} недели назад`;

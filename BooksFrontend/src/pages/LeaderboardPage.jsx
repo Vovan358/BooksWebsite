@@ -106,7 +106,11 @@ function LeaderboardPage() {
                 <tr key={row.userId}>
                   <td>{row.rank}</td>
                   <td>
-                    <Link className="review-author-link" to={`/users/${row.userId}`}>
+                    <Link
+                      className="review-author-link"
+                      to={`/users/${row.userId}`}
+                      state={{ username: row.username }}
+                    >
                       {row.username}
                     </Link>
                   </td>

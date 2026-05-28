@@ -65,8 +65,8 @@ function Header() {
       </div>
 
       <div className="header-user">
-        <Link className="header-action header-action-right" to="/personal">
-          {user || "Гость"}
+        <Link className="header-action header-action-right" to={user ? "/personal" : "/auth"}>
+          {user || "Войти в аккаунт"}
         </Link>
         <button
           className={`theme-toggle theme-switch ${theme === "light" ? "is-light" : ""}`}

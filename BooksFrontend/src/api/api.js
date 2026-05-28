@@ -58,6 +58,11 @@ export const reportComment = (commentId) =>
     method: "POST",
   });
 
+export const deleteComment = (commentId) =>
+  request(`/comment/${commentId}`, {
+    method: "DELETE",
+  });
+
 // Auth
 export const loginRequest = (username, password) =>
   publicRequest("/auth/login", {

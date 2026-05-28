@@ -1,15 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
-import { addComment, getComments, reportComment, voteComment } from "../api/api";
+import { addComment, deleteComment, getComments, reportComment, voteComment } from "../api/api";
 import { useAuth } from "../context/AuthContext";
+import { useProfile } from "../context/ProfileContext";
 import { useToast } from "../context/ToastContext";
+import Pagination from "./Pagination";
 import CommentForm from "./CommentForm";
 import CommentItem from "./CommentItem";
 
+const COMMENT_PAGE_SIZE = 5;
+
 function CommentsSection({ book, onChanged }) {
   const { user, openAuth } = useAuth();
+  const { profile, isAdmin } = useProfile();
   const { showToast } = useToast();
   const [comments, setComments] = useState([]);
   const [sortBy, setSortBy] = useState("newFirst");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const load = async () => {
@@ -21,10 +27,14 @@ function CommentsSection({ book, onChanged }) {
   }, [book.id]);
 
   const handleAdd = async (newComment) => {
-    const saved = await addComment(newComment);
-    setComments((prev) => [...prev, saved]);
-    showToast("Отзыв оставлен!");
-    onChanged?.();
+    try {
+      const saved = await addComment(newComment);
+      setComments((prev) => [...prev, saved]);
+      showToast("Отзыв оставлен!");
+      onChanged?.();
+    } catch {
+      showToast("Вы уже оставили отзыв на эту книгу.", "error");
+    }
   };
 
   const replaceComment = (updatedComment) => {
@@ -54,6 +64,13 @@ function CommentsSection({ book, onChanged }) {
     const updated = await reportComment(commentId);
     replaceComment(updated);
     showToast("Жалоба отправлена.");
+  };
+
+  const handleDelete = async (commentId) => {
+    await deleteComment(commentId);
+    setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+    showToast("Комментарий удалён.");
+    onChanged?.();
   };
 
   const averageRating =
@@ -90,6 +107,19 @@ function CommentsSection({ book, onChanged }) {
     return sorted;
   }, [comments, sortBy]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [sortBy, comments.length]);
+
+  const totalPages = Math.max(1, Math.ceil(sortedComments.length / COMMENT_PAGE_SIZE));
+  const visibleComments = sortedComments.slice(
+    (page - 1) * COMMENT_PAGE_SIZE,
+    page * COMMENT_PAGE_SIZE
+  );
+  const hasReviewed = Boolean(
+    profile?.userId && comments.some((comment) => comment.userId === profile.userId)
+  );
+
   return (
     <section className="review-section">
       <div className="page-title-row">
@@ -101,7 +131,7 @@ function CommentsSection({ book, onChanged }) {
         </div>
       </div>
 
-      <CommentForm book={book} onAdd={handleAdd} />
+      <CommentForm book={book} hasReviewed={hasReviewed} onAdd={handleAdd} />
 
       {comments.length === 0 ? (
         <div className="empty-state">Пока нет отзывов.</div>
@@ -109,6 +139,7 @@ function CommentsSection({ book, onChanged }) {
         <>
           <div className="review-toolbar">
             <select
+              style = {{marginTop: 30, marginBottom: 10}}
               className="select-input"
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value)}
@@ -124,15 +155,18 @@ function CommentsSection({ book, onChanged }) {
             </select>
           </div>
           <div className="review-list">
-            {sortedComments.map((comment) => (
+            {visibleComments.map((comment) => (
               <CommentItem
                 key={comment.id}
                 comment={comment}
+                canDelete={isAdmin}
+                onDelete={handleDelete}
                 onReport={handleReport}
                 onVote={handleVote}
               />
             ))}
           </div>
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </>
       )}
     </section>

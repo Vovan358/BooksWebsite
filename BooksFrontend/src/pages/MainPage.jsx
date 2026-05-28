@@ -4,13 +4,12 @@ import BookGrid from "../components/BookGrid";
 import PageSkeleton from "../components/PageSkeleton";
 import Pagination from "../components/Pagination";
 import { useFavorites } from "../context/FavoritesContext";
-import { filterBooks, paginate, PAGE_SIZE, sortBooks } from "../utils/books";
+import { paginate, PAGE_SIZE, sortBooks } from "../utils/books";
 import { getRecentlyViewed } from "../utils/recentlyViewed";
 
 function MainPage() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [recentlyViewed, setRecentlyViewed] = useState(getRecentlyViewed);
   const { revision: favoritesRevision } = useFavorites();
@@ -26,10 +25,6 @@ function MainPage() {
   }, [favoritesRevision]);
 
   useEffect(() => {
-    setPage(1);
-  }, [search]);
-
-  useEffect(() => {
     const updateRecent = () => setRecentlyViewed(getRecentlyViewed());
     window.addEventListener("recently-viewed:changed", updateRecent);
     window.addEventListener("storage", updateRecent);
@@ -39,30 +34,19 @@ function MainPage() {
     };
   }, []);
 
-  const filtered = useMemo(
-    () => sortBooks(filterBooks(books, search), "createdAt", "desc"),
-    [books, search]
+  const sortedBooks = useMemo(
+    () => sortBooks(books, "createdAt", "desc"),
+    [books]
   );
-  const pageData = paginate(filtered, page, PAGE_SIZE);
+  const pageData = paginate(sortedBooks, page, PAGE_SIZE);
 
   return (
-    <main className="page-shell">
+    <main className="page-shell" >
       <div className="page-title-row">
         <div>
           <h1>Книги-новинки</h1>
-          <p className="page-subtitle">Свежая подборка книг из каталога.</p>
+          <p className="page-subtitle" style = {{marginBottom: 20}}>Свежая подборка книг из каталога.</p>
         </div>
-      </div>
-
-      <div className="toolbar">
-        <input
-          className="search-input"
-          type="search"
-          placeholder="Поиск по названию или автору"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <span className="muted">Найдено: {filtered.length}</span>
       </div>
 
       {loading ? (
@@ -76,16 +60,17 @@ function MainPage() {
             page={pageData.page}
             totalPages={pageData.totalPages}
             onPageChange={setPage}
+            
           />
         </>
       )}
 
       {recentlyViewed.length > 0 && (
         <section className="recent-section">
-          <div className="page-title-row">
+          <div className="page-title-row" style = {{marginTop: 10}}>
             <div>
               <h1>Недавно просмотрено</h1>
-              <p className="page-subtitle">Последние книги, в которые вы заходили.</p>
+              <p className="page-subtitle" style = {{marginBottom: 20}} >Последние книги, в которые вы заходили.</p>
             </div>
           </div>
           <BookGrid books={recentlyViewed.slice(0, 10)} leaderSource={books} />

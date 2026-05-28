@@ -1069,10 +1069,38 @@
 }
 
 .review-item {
+  position: relative;
   border: 1px solid #343642;
   border-radius: 8px;
   background: #22232d;
   padding: 14px;
+}
+
+.review-item.is-own-comment {
+  background: #2a2c38;
+  border-color: #4b5263;
+}
+
+.comment-delete-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  min-height: 30px;
+  margin: 0;
+  border-radius: 999px;
+  background: #a8130e;
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.comment-delete-button:hover {
+  background: #c62828;
 }
 
 .review-header {
@@ -1198,6 +1226,10 @@
   border-radius: 8px;
   text-align: center;
   color: #aeb5c2;
+}
+
+.compact-empty {
+  padding: 14px;
 }
 
 .empty-state a {
@@ -1359,10 +1391,11 @@
 }
 
 .admin-comment-card {
+  position: relative;
   border: 1px solid #343642;
   border-radius: 8px;
   background: #1f2028;
-  padding: 14px;
+  padding: 14px 52px 14px 14px;
 }
 
 .admin-comment-card.has-report {
@@ -1391,6 +1424,7 @@
 .admin-actions-cell {
   position: relative;
   width: 70px;
+  overflow: visible;
 }
 
 .admin-dots {
@@ -1406,8 +1440,8 @@
 .admin-row-menu {
   position: absolute;
   right: 8px;
-  top: 42px;
-  z-index: 8;
+  bottom: 38px;
+  z-index: 50;
   display: grid;
   min-width: 150px;
   border: 1px solid #3f4150;
@@ -1447,6 +1481,71 @@
 
 .admin-modal-actions {
   margin-top: 16px;
+}
+
+.checkout-success-panel {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  max-width: 440px;
+  margin: 48px auto;
+  text-align: center;
+}
+
+:root[data-theme="light"] .panel,
+:root[data-theme="light"] .book-card,
+:root[data-theme="light"] .review-item,
+:root[data-theme="light"] .admin-comment-card,
+:root[data-theme="light"] .delivery-panel,
+:root[data-theme="light"] .description-field,
+:root[data-theme="light"] .auth-modal {
+  background: #ffffff;
+  border-color: #d8deea;
+}
+
+:root[data-theme="light"] .review-item.is-own-comment {
+  background: #eef6ff;
+  border-color: #9cc8ff;
+}
+
+:root[data-theme="light"] .stat-tile,
+:root[data-theme="light"] .comment-vote-control,
+:root[data-theme="light"] .admin-dashboard,
+:root[data-theme="light"] .admin-row-menu,
+:root[data-theme="light"] .delivery-switch button,
+:root[data-theme="light"] .filter-chip,
+:root[data-theme="light"] .skeleton-title,
+:root[data-theme="light"] .skeleton-toolbar,
+:root[data-theme="light"] .skeleton-card,
+:root[data-theme="light"] .skeleton-card div,
+:root[data-theme="light"] .skeleton-card span {
+  background: #f8fafc;
+  border-color: #d8deea;
+}
+
+:root[data-theme="light"] .admin-dashboard {
+  background: rgba(244, 246, 251, 0.96);
+}
+
+:root[data-theme="light"] .admin-sidebar a,
+:root[data-theme="light"] .delivery-switch button,
+:root[data-theme="light"] .filter-chip,
+:root[data-theme="light"] .comment-vote-button,
+:root[data-theme="light"] .admin-row-menu button,
+:root[data-theme="light"] .description-field p {
+  color: #111827;
+}
+
+:root[data-theme="light"] .admin-row-menu button:hover,
+:root[data-theme="light"] .comment-vote-button:hover,
+:root[data-theme="light"] .filter-chip:hover,
+:root[data-theme="light"] .privacy-toggle:hover {
+  background: #e8eef7;
+}
+
+:root[data-theme="light"] .admin-comment-card.has-report {
+  background: #fff1f1;
+  border-color: #fca5a5;
 }
 
 .user-avatar-preview img {

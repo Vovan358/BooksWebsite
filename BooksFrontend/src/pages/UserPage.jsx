@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getPublicUserProfile } from "../api/api";
 import BookGrid from "../components/BookGrid";
 import Pagination from "../components/Pagination";
@@ -11,6 +11,8 @@ const PAGE_SIZE = 3;
 
 function UserPage() {
   const { id } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [favoriteSearch, setFavoriteSearch] = useState("");
@@ -22,6 +24,12 @@ function UserPage() {
       setLoading(true);
       const data = await getPublicUserProfile(id);
       setProfile(data);
+      if (data?.username && location.state?.username !== data.username) {
+        navigate(location.pathname, {
+          replace: true,
+          state: { ...(location.state || {}), username: data.username },
+        });
+      }
       setLoading(false);
     };
 

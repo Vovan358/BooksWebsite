@@ -2,14 +2,18 @@ import { Link } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
 import { formatRelativeDate } from "../utils/date";
 
-function CommentItem({ comment, onReport, onVote }) {
+function CommentItem({ comment, canDelete = false, onDelete, onReport, onVote }) {
   const { profile } = useProfile();
   const score = comment.score || 0;
   const scoreClass =
     score > 0 ? "comment-score-positive" : score < 0 ? "comment-score-negative" : "";
   const isOwnComment = Boolean(profile?.userId && comment.userId === profile.userId);
   const authorContent = comment.userId ? (
-    <Link className="review-author-link" to={`/users/${comment.userId}`}>
+    <Link
+      className="review-author-link"
+      to={`/users/${comment.userId}`}
+      state={{ username: comment.author }}
+    >
       {comment.author}
     </Link>
   ) : (
@@ -17,7 +21,17 @@ function CommentItem({ comment, onReport, onVote }) {
   );
 
   return (
-    <article className="review-item">
+    <article className={`review-item ${isOwnComment ? "is-own-comment" : ""}`}>
+      {canDelete && (
+        <button
+          className="comment-delete-button"
+          type="button"
+          onClick={() => onDelete?.(comment.id)}
+          title="Удалить комментарий"
+        >
+          ×
+        </button>
+      )}
       <div className="review-header">
         <strong>
           {authorContent}

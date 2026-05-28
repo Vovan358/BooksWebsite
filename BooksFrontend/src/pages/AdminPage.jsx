@@ -12,6 +12,7 @@ import {
   getAdminUsers,
   updateAdminBook,
 } from "../api/api";
+import PageSkeleton from "../components/PageSkeleton";
 import Pagination from "../components/Pagination";
 import { useToast } from "../context/ToastContext";
 import { formatRelativeDate } from "../utils/date";
@@ -43,7 +44,12 @@ function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (location.pathname === "/admin") navigate("/admin/users", { replace: true });
+    if (location.pathname === "/admin") {
+      const savedSection = localStorage.getItem("booksWebsiteAdminSection") || "users";
+      navigate(`/admin/${savedSection}`, { replace: true });
+    } else if (section) {
+      localStorage.setItem("booksWebsiteAdminSection", section);
+    }
   }, [location.pathname, navigate]);
 
   return (
@@ -101,15 +107,17 @@ function AdminUsers() {
   const [direction, setDirection] = useState("desc");
   const [page, setPage] = useState(1);
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     getAdminUsers({
       search,
       sortBy: "createdAt",
       direction,
       page,
       pageSize: PAGE_SIZE,
-    }).then(setData);
+    }).then(setData).finally(() => setLoading(false));
   }, [direction, page, search]);
 
   return (
@@ -127,7 +135,7 @@ function AdminUsers() {
         />
         <DirectionButton direction={direction} setDirection={setDirection} />
       </div>
-      <table className="data-table">
+      {loading ? <PageSkeleton /> : <table className="data-table">
         <thead>
           <tr>
             <th>#</th>
@@ -146,7 +154,7 @@ function AdminUsers() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table>}
       <Pagination page={data?.page || 1} totalPages={data?.totalPages || 1} onPageChange={setPage} />
     </section>
   );
@@ -158,9 +166,13 @@ function AdminOrders() {
   const [direction, setDirection] = useState("desc");
   const [page, setPage] = useState(1);
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAdminOrders({ search, sortBy, direction, page, pageSize: PAGE_SIZE }).then(setData);
+    setLoading(true);
+    getAdminOrders({ search, sortBy, direction, page, pageSize: PAGE_SIZE })
+      .then(setData)
+      .finally(() => setLoading(false));
   }, [direction, page, search, sortBy]);
 
   return (
@@ -185,7 +197,7 @@ function AdminOrders() {
           </select>
         </div>
       </div>
-      <table className="data-table">
+      {loading ? <PageSkeleton /> : <table className="data-table">
         <thead>
           <tr>
             <th>#</th>
@@ -206,7 +218,7 @@ function AdminOrders() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table>}
       <Pagination page={data?.page || 1} totalPages={data?.totalPages || 1} onPageChange={setPage} />
     </section>
   );
@@ -217,9 +229,13 @@ function AdminComments({ onChanged, showToast }) {
   const [onlyReported, setOnlyReported] = useState(false);
   const [page, setPage] = useState(1);
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const load = () => {
-    getAdminComments({ search, onlyReported, page, pageSize: PAGE_SIZE }).then(setData);
+    setLoading(true);
+    getAdminComments({ search, onlyReported, page, pageSize: PAGE_SIZE })
+      .then(setData)
+      .finally(() => setLoading(false));
   };
 
   useEffect(load, [onlyReported, page, search]);
@@ -254,12 +270,20 @@ function AdminComments({ onChanged, showToast }) {
           {onlyReported ? "Жалобы" : "Все"}
         </button>
       </div>
-      <div className="admin-comment-list">
+      {loading ? <PageSkeleton /> : <div className="admin-comment-list">
         {(data?.items || []).map((comment, index) => (
           <article
             className={`admin-comment-card ${comment.hasReports ? "has-report" : ""}`}
             key={comment.id}
           >
+            <button
+              className="comment-delete-button"
+              type="button"
+              onClick={() => removeComment(comment)}
+              title="Удалить комментарий"
+            >
+              ×
+            </button>
             <div className="admin-comment-head">
               <strong>#{(data.page - 1) * data.pageSize + index + 1}</strong>
               <span>{comment.username}</span>
@@ -269,14 +293,13 @@ function AdminComments({ onChanged, showToast }) {
             <p>{comment.description}</p>
             <div className="button-row">
               <span className="muted">Оценка: {comment.rating}/10</span>
-              <span className="muted">Рейтинг комментария: {comment.commentRating}</span>
-              <button className="btn btn-danger" onClick={() => removeComment(comment)}>
-                Удалить
-              </button>
+              <span className={`comment-score ${comment.commentRating > 0 ? "comment-score-positive" : comment.commentRating < 0 ? "comment-score-negative" : ""}`}>
+                {comment.commentRating > 0 ? `+${comment.commentRating}` : comment.commentRating}
+              </span>
             </div>
           </article>
         ))}
-      </div>
+      </div>}
       <Pagination page={data?.page || 1} totalPages={data?.totalPages || 1} onPageChange={setPage} />
     </section>
   );
@@ -286,15 +309,26 @@ function AdminBooks({ onChanged, showToast }) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [menuBookId, setMenuBookId] = useState(null);
   const [editingBook, setEditingBook] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
   const load = () => {
-    getAdminBooks({ search, page, pageSize: PAGE_SIZE }).then(setData);
+    setLoading(true);
+    getAdminBooks({ search, page, pageSize: PAGE_SIZE })
+      .then(setData)
+      .finally(() => setLoading(false));
   };
 
   useEffect(load, [page, search]);
+
+  useEffect(() => {
+    if (!menuBookId) return;
+    const close = () => setMenuBookId(null);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [menuBookId]);
 
   const openCreate = () => setEditingBook({ ...emptyBookForm });
   const openEdit = (book) =>
@@ -357,34 +391,39 @@ function AdminBooks({ onChanged, showToast }) {
           Создать книгу
         </button>
       </div>
-      <table className="data-table">
+      {loading ? <PageSkeleton /> : <table className="data-table admin-books-table">
         <thead>
           <tr>
-            <th>#</th>
-            <th>BookName</th>
-            <th>Author</th>
-            <th>Rating</th>
-            <th>Orders</th>
+            <th>Id</th>
+            <th>Название</th>
+            <th>Автор</th>
+            <th>Оценка</th>
+            <th>Заказов</th>
+            <th>Наличие</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {(data?.items || []).map((book, index) => (
             <tr key={book.id}>
-              <td>{(data.page - 1) * data.pageSize + index + 1}</td>
+              <td>{book.id}</td>
               <td>{book.bookName}</td>
               <td>{book.author}</td>
               <td>{book.rating.toFixed(1)}</td>
               <td>{book.orders}</td>
+              <td>{book.stock}</td>
               <td className="admin-actions-cell">
                 <button
                   className="admin-dots"
-                  onClick={() => setMenuBookId((current) => (current === book.id ? null : book.id))}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setMenuBookId((current) => (current === book.id ? null : book.id));
+                  }}
                 >
                   ...
                 </button>
                 {menuBookId === book.id && (
-                  <div className="admin-row-menu">
+                  <div className="admin-row-menu" onClick={(event) => event.stopPropagation()}>
                     <button onClick={() => openEdit(book)}>Редактировать</button>
                     <button onClick={() => setDeleteTarget(book)}>Удалить</button>
                   </div>
@@ -393,7 +432,7 @@ function AdminBooks({ onChanged, showToast }) {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table>}
       <Pagination page={data?.page || 1} totalPages={data?.totalPages || 1} onPageChange={setPage} />
 
       {editingBook && (
@@ -431,6 +470,15 @@ function BookEditor({ book, onClose, onSave, onClearComments }) {
     setForm((current) => ({ ...current, [field]: value }));
   };
 
+  const uploadCover = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => update("imageUrl", reader.result);
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div className="admin-modal-overlay">
       <section className="panel admin-modal">
@@ -455,6 +503,10 @@ function BookEditor({ book, onClose, onSave, onClearComments }) {
           <label className="profile-form-wide">
             Обложка
             <input className="form-input" value={form.imageUrl} onChange={(event) => update("imageUrl", event.target.value)} />
+          </label>
+          <label className="profile-form-wide">
+            Загрузить обложку с компьютера
+            <input className="form-input" type="file" accept="image/*" onChange={uploadCover} />
           </label>
           <label className="profile-form-wide">
             Описание

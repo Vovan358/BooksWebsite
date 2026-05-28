@@ -72,6 +72,12 @@ public class CommentController : ControllerBase
         if (comment.Rating < 0 || comment.Rating > 10)
             return BadRequest("Rating must be between 0 and 10");
 
+        var alreadyCommented = await _context.Comments
+            .AnyAsync(c => c.BookId == comment.BookId && c.UserId == userId);
+
+        if (alreadyCommented)
+            return BadRequest("You already left a review for this book");
+
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 

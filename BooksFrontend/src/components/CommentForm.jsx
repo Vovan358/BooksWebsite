@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
-function CommentForm({ book, onAdd }) {
+function CommentForm({ book, hasReviewed, onAdd }) {
   const [text, setText] = useState("");
   const [rating, setRating] = useState(5);
   const { user, openAuth } = useAuth();
@@ -26,6 +26,14 @@ function CommentForm({ book, onAdd }) {
           Войдите
         </button>
         <span>чтобы оставить отзыв.</span>
+      </div>
+    );
+  }
+
+  if (hasReviewed) {
+    return (
+      <div className="empty-state compact-empty">
+        Вы уже оставили отзыв на эту книгу.
       </div>
     );
   }
