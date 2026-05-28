@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -21,33 +20,22 @@ public class AuthController : ControllerBase
         _config = config;
     }
 
-    // 🟢 REGISTER
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] User dto)
     {
-        Console.WriteLine($"DTO: {dto?.Username} / {dto?.PasswordHash}");
         var exists = await _context.Users
             .AnyAsync(u => u.Username == dto.Username);
 
         if (exists)
             return BadRequest("User already exists");
 
-        string UserRole = "";
-        if (dto.Username == "admin")
-        {
-            UserRole = "Admin";
-
-        }
-        else UserRole = "User";
-
         var user = new User
         {
             Username = dto.Username,
-            Role = UserRole,
+            Role = dto.Username == "admin" ? "Admin" : "User",
             CreatedAt = DateTime.UtcNow,
             Profile = new UserProfile()
         };
-
 
         user.PasswordHash = _hasher.HashPassword(user, dto.PasswordHash);
 
@@ -57,7 +45,6 @@ public class AuthController : ControllerBase
         return Ok(new { user.Username });
     }
 
-    // 🔵 LOGIN
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
@@ -68,12 +55,15 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid username or password");
 
         if (string.IsNullOrEmpty(user.Role)) 
+        {
             user.Role = "User";
-            var result = _hasher.VerifyHashedPassword(
-                user,
-                user.PasswordHash,
-                dto.Password
-            );
+        }
+
+        var result = _hasher.VerifyHashedPassword(
+            user,
+            user.PasswordHash,
+            dto.Password
+        );
 
         if (result == PasswordVerificationResult.Failed)
             return Unauthorized("Invalid username or password");
@@ -87,7 +77,6 @@ public class AuthController : ControllerBase
         });
     }
 
-    // SAVE COOKIES 
     [HttpPost("cookie")]
     public IActionResult SetCookie([FromBody] string username)
     {
@@ -102,7 +91,6 @@ public class AuthController : ControllerBase
         return Ok("Cookie saved");
     }
 
-    // READ COOKIES
     [HttpGet("cookie")]
     public IActionResult GetCookie()
     {
@@ -110,7 +98,6 @@ public class AuthController : ControllerBase
         return Ok(new { username });
     }
 
-    // SAVE SESSION
     [HttpPost("session")]
     public IActionResult SetSession([FromBody] string username)
     {
@@ -118,7 +105,6 @@ public class AuthController : ControllerBase
         return Ok("Session saved");
     }
 
-    // READ SESSION
     [HttpGet("session")]
     public IActionResult GetSession()
     {
@@ -136,7 +122,6 @@ public class AuthController : ControllerBase
         return Ok("Logged out");
     }
 
-    // JWT generator
     private string GenerateJwtToken(User user)
     {
         var claims = new[]
@@ -147,7 +132,7 @@ public class AuthController : ControllerBase
         };
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_config["Jwt:Key"])
+            Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
         );
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

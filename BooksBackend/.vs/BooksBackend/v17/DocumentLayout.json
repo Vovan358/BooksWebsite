@@ -55,10 +55,6 @@
       "RelativeMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|solutionrelative:booksbackend\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|c:\\users\\vovan358\\desktop\\\u0432\u0441\u0451\\programs\\bookswebsite\\booksbackend\\booksbackend\\controllers\\securecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|solutionrelative:booksbackend\\controllers\\securecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|c:\\users\\vovan358\\desktop\\\u0432\u0441\u0451\\programs\\bookswebsite\\booksbackend\\booksbackend\\controllers\\commentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{34527D8D-B6CA-48F3-B2DB-7BAE15F1193F}|BooksBackend\\BooksBackend.csproj|solutionrelative:booksbackend\\controllers\\commentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -152,7 +148,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 17,
               "Title": "BooksBackend.http",
               "DocumentMoniker": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\BooksBackend.http",
               "RelativeDocumentMoniker": "BooksBackend\\BooksBackend.http",
@@ -164,19 +160,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "SecureController.cs",
-              "DocumentMoniker": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\Controllers\\SecureController.cs",
-              "RelativeDocumentMoniker": "BooksBackend\\Controllers\\SecureController.cs",
-              "ToolTip": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\Controllers\\SecureController.cs",
-              "RelativeToolTip": "BooksBackend\\Controllers\\SecureController.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAqwBoAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-17T18:50:09.074Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 15,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "BooksBackend\\Properties\\launchSettings.json",
@@ -248,7 +232,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 16,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\appsettings.json",
               "RelativeDocumentMoniker": "BooksBackend\\appsettings.json",
@@ -284,7 +268,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 13,
               "Title": "CommentController.cs",
               "DocumentMoniker": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\Controllers\\CommentController.cs",
               "RelativeDocumentMoniker": "BooksBackend\\Controllers\\CommentController.cs",
@@ -296,7 +280,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 14,
               "Title": "BookController.cs",
               "DocumentMoniker": "C:\\Users\\Vovan358\\Desktop\\\u0412\u0441\u0451\\Programs\\BooksWebsite\\BooksBackend\\BooksBackend\\Controllers\\BookController.cs",
               "RelativeDocumentMoniker": "BooksBackend\\Controllers\\BookController.cs",

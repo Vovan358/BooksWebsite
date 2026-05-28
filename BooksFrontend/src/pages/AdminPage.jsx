@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   clearAdminBookComments,
@@ -589,7 +589,7 @@ function AdminBooks({ onChanged, showToast }) {
           </tr>
         </thead>
         <tbody>
-          {(data?.items || []).map((book, index) => (
+          {(data?.items || []).map((book) => (
             <tr className={book.isHidden ? "admin-hidden-book-row" : ""} key={book.id}>
               <td>{book.id}</td>
               <td>
@@ -642,12 +642,10 @@ function AdminBooks({ onChanged, showToast }) {
 
       {deleteTarget && (
         <div className="admin-modal-overlay">
-          
           <section className="panel admin-modal">
             <h2>Удалить книгу?</h2>
-            
-            <p className="page-subtitle" style={{marginBottom: 10}}>
-            
+
+            <p className="page-subtitle admin-delete-copy">
               Вы точно хотите удалить книгу "{deleteTarget.bookName}" с маркетплейса?<br />
               Внимание! Удалить можно только ту книгу, которую ещё не заказывали!
             </p>

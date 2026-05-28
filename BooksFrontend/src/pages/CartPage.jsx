@@ -88,7 +88,7 @@ function CartPage() {
             </tbody>
           </table>
 
-          <div className="page-title-row" style={{ marginTop: "18px" }}>
+          <div className="page-title-row cart-total-row">
             <h2>Сумма заказа: {totalPrice} ₽</h2>
             <div className="button-row">
               <button className="btn btn-danger" onClick={clearCart}>

@@ -344,6 +344,10 @@
   margin: 22px 0 4px;
 }
 
+.cart-total-row {
+  margin-top: 18px;
+}
+
 .panel {
   border: 1px solid #343642;
   border-radius: 8px;
@@ -476,6 +480,10 @@
 
 .personal-stat-grid {
   width: 100%;
+  grid-template-columns: 1fr;
+}
+
+.leaderboard-rank-grid {
   grid-template-columns: 1fr;
 }
 
@@ -1630,6 +1638,10 @@
 
 .admin-modal-actions {
   margin-top: 16px;
+}
+
+.admin-delete-copy {
+  margin-bottom: 10px;
 }
 
 .admin-cover-preview {

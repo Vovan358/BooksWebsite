@@ -563,35 +563,6 @@
             "description": "Success"
           }
         }
-      },
-      "post": {
-        "tags": [
-          "Book"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Book"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Book"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Book"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
       }
     },
     "/api/Book/{id}": {
@@ -609,39 +580,6 @@
               "format": "int32"
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Book"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Book/redis": {
-      "get": {
-        "tags": [
-          "Book"
         ],
         "responses": {
           "200": {
@@ -931,42 +869,6 @@
       "get": {
         "tags": [
           "Order"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Secure/public": {
-      "get": {
-        "tags": [
-          "Secure"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Secure/user": {
-      "get": {
-        "tags": [
-          "Secure"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Secure/admin": {
-      "get": {
-        "tags": [
-          "Secure"
         ],
         "responses": {
           "200": {

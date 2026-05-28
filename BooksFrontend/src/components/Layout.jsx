@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
@@ -31,7 +31,7 @@ function Layout() {
       {isPageLoading ? (
         <PageSkeleton />
       ) : (
-        <motion.div
+        <Motion.div
           key={location.pathname}
           initial={{ opacity: 0, y: -22 }}
           animate={{ opacity: 1, y: 0 }}
@@ -39,7 +39,7 @@ function Layout() {
         >
           <Breadcrumbs />
           <Outlet />
-        </motion.div>
+        </Motion.div>
       )}
     </div>
   );

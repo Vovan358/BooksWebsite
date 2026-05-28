@@ -25,7 +25,6 @@ function CheckoutPage() {
   const { showToast } = useToast();
   const [success, setSuccess] = useState(false);
   const [successTotal, setSuccessTotal] = useState(0);
-  const [error, setError] = useState("");
   const [syncNotice, setSyncNotice] = useState("");
   const [deliveryType, setDeliveryType] = useState("home");
   const [checkoutInfo, setCheckoutInfo] = useState({
@@ -67,8 +66,6 @@ function CheckoutPage() {
   }, [profile]);
 
   const handleCheckout = async () => {
-    setError("");
-
     if (!user) {
       navigate("/auth", { state: { from: "/checkout" } });
       return;
@@ -112,8 +109,7 @@ function CheckoutPage() {
       clearCart();
       setSuccess(true);
       showToast("Заказ оформлен!");
-    } catch (err) {
-      setError(err.message || "Не удалось оформить заказ");
+    } catch {
       showToast("Не удалось оформить заказ.", "error");
     }
   };

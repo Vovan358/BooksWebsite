@@ -1,1 +1,16 @@
-BooksBackend/.vs
+BooksBackend/.vs/
+
+# .NET build artifacts
+**/bin/
+**/obj/
+
+# Frontend dependencies and build output
+**/node_modules/
+**/dist/
+
+# Local editor/system files
+.vs/
+.vscode/
+*.user
+*.suo
+Thumbs.db

@@ -48,7 +48,7 @@ function LeaderboardPage() {
       <aside className="panel">
         <h2>{user || "Гость"}</h2>
         {data?.currentUserRanks ? (
-          <div className="stat-grid" style={{ gridTemplateColumns: "1fr" }}>
+          <div className="stat-grid leaderboard-rank-grid">
             <div className="stat-tile">
               <span className="stat-value">#{data.currentUserRanks.booksBoughtRank}</span>
               <span className="stat-label">Место по купленным книгам</span>

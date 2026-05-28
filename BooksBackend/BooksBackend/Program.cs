@@ -4,8 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
 using Prometheus;
-using System;
-using System.Diagnostics.Metrics;
 using System.Text;
 
 namespace BooksBackend
@@ -16,7 +14,6 @@ namespace BooksBackend
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Подключаем контроллеры
             builder.Services.AddControllers();
 
             builder.Services.AddOpenTelemetry()
@@ -26,13 +23,10 @@ namespace BooksBackend
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
-
-                    //.AddPrometheusExporter();
             });
 
-            builder.Services.AddResponseCaching(); // 17
-            builder.Services.AddMemoryCache(); // 17
-            builder.Services.AddStackExchangeRedisCache(options => // 17
+            builder.Services.AddResponseCaching();
+            builder.Services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = "localhost:6379";
                 options.InstanceName = "BooksRedis_";
@@ -49,7 +43,6 @@ namespace BooksBackend
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
             });
 
-            // Swagger (для тестов)
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
@@ -79,19 +72,16 @@ namespace BooksBackend
                 });
             });
 
-            var jwtKey = builder.Configuration["Jwt:Key"];
+            var jwtKey = builder.Configuration["Jwt:Key"]!;
             var key = Encoding.UTF8.GetBytes(jwtKey);
 
-            // Подключаем БД
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("DefaultConnection")
                 ));
 
-            // 🔥 CORS — чтобы фронт мог стучаться
             builder.Services.AddCors(options =>
             {
-                // 1. Полный доступ (для разработки)
                 options.AddPolicy("DevPolicy", policy =>
                     policy
                         .WithOrigins("http://localhost:5173")
@@ -99,14 +89,12 @@ namespace BooksBackend
                         .AllowAnyMethod()
                         .AllowCredentials());
 
-                // 2. Ограниченный доступ только для фронта
                 options.AddPolicy("FrontendPolicy", policy =>
                     policy
                         .WithOrigins("http://localhost:5173")
                         .AllowAnyHeader()
                         .AllowAnyMethod());
 
-                // 3. Тестовая строгая политика (GET-only)
                 options.AddPolicy("ReadOnlyPolicy", policy =>
                     policy
                         .WithOrigins("http://localhost:5173")
@@ -134,7 +122,7 @@ namespace BooksBackend
 
             var app = builder.Build();
             app.UseStaticFiles();
-            // Swagger
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -143,19 +131,18 @@ namespace BooksBackend
 
             app.UseRouting();
 
-            app.UseResponseCaching(); //17
+            app.UseResponseCaching();
 
             app.UseSession();
-            // CORS
             app.UseCors("DevPolicy");
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseHttpMetrics(); // 18
+            app.UseHttpMetrics();
 
             app.MapControllers();
 
-            app.MapMetrics(); //18
+            app.MapMetrics();
     
             app.Run();
         }
