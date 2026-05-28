@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getBooks } from "../api/api";
 import BookGrid from "../components/BookGrid";
@@ -22,6 +22,8 @@ function CataloguePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false);
+  const pageLoadingTimer = useRef(null);
   const { revision: favoritesRevision } = useFavorites();
 
   const search = searchParams.get("q") || "";
@@ -58,6 +60,15 @@ function CataloguePage() {
     load();
   }, [favoritesRevision]);
 
+  useEffect(
+    () => () => {
+      if (pageLoadingTimer.current) {
+        clearTimeout(pageLoadingTimer.current);
+      }
+    },
+    []
+  );
+
   const visibleBooks = useMemo(() => {
     let next = filterBooks(books, search);
     if (onlyAvailable) next = next.filter((book) => book.stock > 0);
@@ -66,6 +77,21 @@ function CataloguePage() {
   }, [books, onlyAvailable, onlyReviewed, search, sortBy, sortDirection]);
 
   const pageData = paginate(visibleBooks, page, PAGE_SIZE);
+
+  const handlePageChange = (nextPage) => {
+    if (nextPage === page) return;
+
+    setPageLoading(true);
+    if (pageLoadingTimer.current) {
+      clearTimeout(pageLoadingTimer.current);
+    }
+
+    pageLoadingTimer.current = setTimeout(() => {
+      setPageLoading(false);
+    }, 450);
+
+    updateCatalogueParams({ page: nextPage });
+  };
 
   return (
     <main className="page-shell">
@@ -162,7 +188,7 @@ function CataloguePage() {
         </button>
       </div>
 
-      {loading ? (
+      {loading || pageLoading ? (
         <PageSkeleton />
       ) : pageData.items.length === 0 ? (
         <div className="empty-state">Книги не найдены.</div>
@@ -172,9 +198,7 @@ function CataloguePage() {
           <Pagination
             page={pageData.page}
             totalPages={pageData.totalPages}
-            onPageChange={(nextPage) =>
-              updateCatalogueParams({ page: nextPage })
-            }
+            onPageChange={handlePageChange}
           />
         </>
       )}

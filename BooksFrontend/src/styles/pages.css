@@ -1685,12 +1685,24 @@
   border-color: #9cc8ff;
 }
 
+:root[data-theme="light"] .review-author-link,
+:root[data-theme="light"] .empty-state a {
+  color: #2563eb;
+}
+
+:root[data-theme="light"] .review-author-link:hover,
+:root[data-theme="light"] .empty-state a:hover {
+  color: #1d4ed8;
+}
+
 :root[data-theme="light"] .stat-tile,
 :root[data-theme="light"] .comment-vote-control,
 :root[data-theme="light"] .admin-dashboard,
 :root[data-theme="light"] .admin-row-menu,
 :root[data-theme="light"] .delivery-switch button,
 :root[data-theme="light"] .filter-chip,
+:root[data-theme="light"] .sort-direction-button,
+:root[data-theme="light"] .privacy-toggle,
 :root[data-theme="light"] .skeleton-title,
 :root[data-theme="light"] .skeleton-toolbar,
 :root[data-theme="light"] .skeleton-card,
@@ -1698,6 +1710,53 @@
 :root[data-theme="light"] .skeleton-card span {
   background: #f8fafc;
   border-color: #d8deea;
+}
+
+:root[data-theme="light"] .book-card {
+  background: #ffffff;
+  border-color: #d8deea;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .book-card-featured {
+  border-color: transparent;
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(135deg, #fde68a, #f59e0b, #fff7cc) border-box;
+  box-shadow: 0 12px 30px rgba(245, 158, 11, 0.13);
+}
+
+:root[data-theme="light"] .book-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 14px 36px rgba(37, 99, 235, 0.12);
+}
+
+:root[data-theme="light"] .book-card-image,
+:root[data-theme="light"] .book-detail-cover,
+:root[data-theme="light"] .avatar-upload,
+:root[data-theme="light"] .admin-cover-preview {
+  background: #eef2f7;
+  border-color: #d8deea;
+}
+
+:root[data-theme="light"] .favorite-button {
+  border-color: rgba(148, 163, 184, 0.75);
+  background: rgba(255, 255, 255, 0.88);
+  color: #64748b;
+  text-shadow: none;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12);
+}
+
+:root[data-theme="light"] .favorite-button:hover {
+  background: #ffffff;
+  color: #ef4444;
+  box-shadow: 0 12px 26px rgba(239, 68, 68, 0.14);
+}
+
+:root[data-theme="light"] .favorite-button.is-favorite {
+  border-color: #fecaca;
+  background: #fff1f2;
+  color: #dc2626;
 }
 
 :root[data-theme="light"] .admin-dashboard {
@@ -1713,6 +1772,69 @@
   color: #111827;
 }
 
+:root[data-theme="light"] .profile-form-grid label,
+:root[data-theme="light"] .admin-comment-head,
+:root[data-theme="light"] .amount-control span,
+:root[data-theme="light"] .privacy-toggle {
+  color: #111827;
+}
+
+:root[data-theme="light"] .sort-direction-button {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+:root[data-theme="light"] .sort-direction-button:hover {
+  color: #1e40af;
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+:root[data-theme="light"] .rating-orange,
+:root[data-theme="light"] .stat-value.rating-orange,
+:root[data-theme="light"] .rating-value.rating-orange {
+  color: #c2410c;
+}
+
+:root[data-theme="light"] .rating-yellow,
+:root[data-theme="light"] .stat-value.rating-yellow,
+:root[data-theme="light"] .rating-value.rating-yellow {
+  color: #a16207;
+}
+
+:root[data-theme="light"] .rating-blue,
+:root[data-theme="light"] .stat-value.rating-blue,
+:root[data-theme="light"] .rating-value.rating-blue {
+  color: #0369a1;
+}
+
+:root[data-theme="light"] .stock-available,
+:root[data-theme="light"] .price {
+  color: #15803d;
+}
+
+:root[data-theme="light"] .stat-tile:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 14px 34px rgba(37, 99, 235, 0.12);
+}
+
+:root[data-theme="light"] .data-table th {
+  border-bottom-color: #d8deea;
+  background: #edf2f7;
+  color: #111827;
+}
+
+:root[data-theme="light"] .data-table td {
+  border-bottom-color: #e5eaf2;
+  color: #374151;
+}
+
+:root[data-theme="light"] .admin-hidden-book-row {
+  background: #edf2f7;
+  opacity: 0.68;
+}
+
 :root[data-theme="light"] .book-description-box p {
   color: #374151;
 }
@@ -1723,11 +1845,194 @@
   background: #eef2f7;
 }
 
+:root[data-theme="light"] .privacy-toggle {
+  background: #ffffff;
+  border-color: #d8deea;
+}
+
+:root[data-theme="light"] .privacy-toggle:hover {
+  background: #f8fafc;
+  border-color: #bfdbfe;
+  color: #111827;
+}
+
+:root[data-theme="light"] .privacy-toggle.is-on {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+:root[data-theme="light"] .privacy-toggle.is-on:hover {
+  background: #dcfce7;
+  border-color: #4ade80;
+}
+
+:root[data-theme="light"] .privacy-switch {
+  background: #cbd5e1;
+}
+
+:root[data-theme="light"] .privacy-switch::after {
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.24);
+}
+
+:root[data-theme="light"] .privacy-toggle.is-on .privacy-switch {
+  background: #16a34a;
+}
+
+:root[data-theme="light"] .admin-dots {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+}
+
+:root[data-theme="light"] .admin-dots:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+:root[data-theme="light"] .admin-row-menu {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.16);
+}
+
 :root[data-theme="light"] .admin-row-menu button:hover,
 :root[data-theme="light"] .comment-vote-button:hover,
-:root[data-theme="light"] .filter-chip:hover,
-:root[data-theme="light"] .privacy-toggle:hover {
+:root[data-theme="light"] .filter-chip:hover {
   background: #e8eef7;
+}
+
+:root[data-theme="light"] .btn-ghost {
+  color: #1f2937;
+  border-color: #cbd5e1;
+  background: #ffffff;
+}
+
+:root[data-theme="light"] .btn-ghost:hover {
+  background: #f1f5fb;
+}
+
+:root[data-theme="light"] .btn-primary {
+  background: #f59e0b;
+  color: #1f2937;
+}
+
+:root[data-theme="light"] .btn-primary:hover {
+  background: #e58d00;
+}
+
+:root[data-theme="light"] .book-price-badge {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .book-badge {
+  background: linear-gradient(135deg, #fde68a, #f59e0b);
+  color: #3b2a00;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
+}
+
+:root[data-theme="light"] .notice {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #166534;
+}
+
+:root[data-theme="light"] .admin-comment-text,
+:root[data-theme="light"] .comment-text-box p {
+  color: #374151;
+}
+
+:root[data-theme="light"] .delivery-switch button {
+  background: #ffffff;
+  color: #334155;
+  border-color: #d8deea;
+}
+
+:root[data-theme="light"] .delivery-switch button:hover {
+  background: #f1f5fb;
+  border-color: #bfdbfe;
+}
+
+:root[data-theme="light"] .delivery-switch button.is-active {
+  background: #e7f7ed;
+  color: #166534;
+  border-color: #86efac;
+}
+
+:root[data-theme="light"] .delivery-panel label,
+:root[data-theme="light"] .book-inline-stats {
+  color: #475569;
+}
+
+:root[data-theme="light"] .delivery-panel.is-muted {
+  background: #f8fafc;
+  opacity: 0.72;
+}
+
+:root[data-theme="light"] .filter-chip {
+  background: #ffffff;
+  color: #334155;
+  border-color: #d8deea;
+}
+
+:root[data-theme="light"] .filter-chip:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+:root[data-theme="light"] .filter-chip.is-active {
+  background: #e7f7ed;
+  color: #166534;
+  border-color: #86efac;
+}
+
+:root[data-theme="light"] .recent-section,
+:root[data-theme="light"] .recommendation-section {
+  border-top-color: #d8deea;
+}
+
+:root[data-theme="light"] .skeleton-card,
+:root[data-theme="light"] .skeleton-title,
+:root[data-theme="light"] .skeleton-toolbar,
+:root[data-theme="light"] .skeleton-card div,
+:root[data-theme="light"] .skeleton-card span {
+  background: #e8eef7;
+  border-color: #d8deea;
+}
+
+:root[data-theme="light"] .skeleton-title::after,
+:root[data-theme="light"] .skeleton-toolbar::after,
+:root[data-theme="light"] .skeleton-card div::after,
+:root[data-theme="light"] .skeleton-card span::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.58), transparent);
+}
+
+:root[data-theme="light"] .admin-sidebar a {
+  background: #ffffff;
+  border-color: #d8deea;
+  color: #334155;
+}
+
+:root[data-theme="light"] .admin-sidebar a.active,
+:root[data-theme="light"] .admin-sidebar a:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+:root[data-theme="light"] .admin-comment-card.has-report .admin-comment-text {
+  color: #7f1d1d;
+}
+
+:root[data-theme="light"] .admin-modal-overlay {
+  background: rgba(15, 23, 42, 0.42);
+}
+
+:root[data-theme="light"] .cart-flyer {
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.24);
 }
 
 :root[data-theme="light"] .admin-comment-card.has-report {
