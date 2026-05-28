@@ -145,6 +145,17 @@ body {
   left: 24px;
 }
 
+.header-admin-link {
+  top: 66px;
+  left: 24px;
+  background: #1976d2;
+  color: #ffffff;
+}
+
+.header-admin-link:hover {
+  background: #1565c0;
+}
+
 .header-action-right {
   right: 24px;
   background: #43a047;

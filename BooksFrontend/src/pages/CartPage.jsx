@@ -38,7 +38,12 @@ function CartPage() {
       {syncNotice && <div className="notice">{syncNotice}</div>}
 
       {items.length === 0 ? (
-        <div className="empty-state">Корзина пуста.</div>
+        <div className="empty-state">
+          <p>Корзина пуста.</p>
+          <p>
+            <Link to="/">Вперёд за покупками!</Link>
+          </p>
+        </div>
       ) : (
         <section className="panel">
           <table className="data-table">

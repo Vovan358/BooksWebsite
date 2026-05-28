@@ -23,7 +23,10 @@ public class UserController : ControllerBase
             return Unauthorized("Invalid token");
 
         var profile = await EnsureProfile(userId.Value);
-        return Ok(await BuildProfileDto(userId.Value, includePrivateData: true));
+        return Ok(await BuildProfileDto(
+            userId.Value,
+            includePrivateData: true,
+            includeHiddenBlocks: true));
     }
 
     [Authorize]
@@ -54,7 +57,10 @@ public class UserController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        return Ok(await BuildProfileDto(userId.Value, includePrivateData: true));
+        return Ok(await BuildProfileDto(
+            userId.Value,
+            includePrivateData: true,
+            includeHiddenBlocks: true));
     }
 
     [AllowAnonymous]
@@ -65,7 +71,14 @@ public class UserController : ControllerBase
         if (!exists)
             return NotFound();
 
-        return Ok(await BuildProfileDto(id, includePrivateData: false));
+        var currentUserId = GetCurrentUserId();
+        var includeHiddenBlocks =
+            currentUserId == id || User.IsInRole("Admin");
+
+        return Ok(await BuildProfileDto(
+            id,
+            includePrivateData: false,
+            includeHiddenBlocks: includeHiddenBlocks));
     }
 
     [Authorize]
@@ -116,9 +129,12 @@ public class UserController : ControllerBase
         return profile;
     }
 
-    private async Task<UserProfileDto?> BuildProfileDto(int userId, bool includePrivateData)
+    private async Task<UserProfileDto?> BuildProfileDto(
+        int userId,
+        bool includePrivateData,
+        bool includeHiddenBlocks)
     {
-        return await _context.Users
+        var dto = await _context.Users
             .Where(u => u.Id == userId)
             .Select(u => new UserProfileDto
             {
@@ -140,5 +156,91 @@ public class UserController : ControllerBase
                 ShowStats = u.Profile == null || u.Profile.ShowStats
             })
             .FirstOrDefaultAsync();
+
+        if (dto == null)
+            return null;
+
+        dto.CanViewStats = includeHiddenBlocks || dto.ShowStats;
+        dto.CanViewFavorites = includeHiddenBlocks || dto.ShowFavorites;
+        dto.CanViewOrderHistory = includeHiddenBlocks || dto.ShowOrderHistory;
+
+        if (dto.CanViewStats)
+            dto.Stats = await BuildStatsDto(userId);
+
+        if (dto.CanViewFavorites)
+            dto.FavoriteBooks = await BuildFavoriteBooks(userId);
+
+        if (dto.CanViewOrderHistory)
+            dto.Orders = await BuildOrders(userId);
+
+        return dto;
+    }
+
+    private async Task<UserStatsDto?> BuildStatsDto(int userId)
+    {
+        return await _context.Users
+            .Where(u => u.Id == userId)
+            .Select(u => new UserStatsDto
+            {
+                UserId = u.Id,
+                Username = u.Username,
+                OrdersCount = u.Orders.Count,
+                BooksBought = u.Orders.SelectMany(o => o.Items).Sum(i => (int?)i.Quantity) ?? 0,
+                MoneySpent = u.Orders.Sum(o => (int?)o.TotalPrice) ?? 0,
+                CommentsLeft = u.Comments.Count
+            })
+            .FirstOrDefaultAsync();
+    }
+
+    private async Task<List<BookResponseDto>> BuildFavoriteBooks(int userId)
+    {
+        return await _context.FavoriteBooks
+            .Where(f => f.UserId == userId)
+            .Where(f => f.Book != null)
+            .OrderByDescending(f => f.CreatedAt)
+            .Select(f => new BookResponseDto
+            {
+                Id = f.Book!.Id,
+                Title = f.Book.Title,
+                Author = f.Book.Author,
+                Available = f.Book.Available,
+                Price = f.Book.Price,
+                Stock = f.Book.Stock,
+                Description = f.Book.Description,
+                ImageUrl = f.Book.ImageUrl,
+                CreatedAt = f.Book.CreatedAt,
+                CommentsNumber = f.Book.Comments.Count,
+                AverageRating = f.Book.Comments.Count == 0
+                    ? 0
+                    : f.Book.Comments.Average(c => c.Rating),
+                SoldCount = f.Book.OrderItems.Sum(i => (int?)i.Quantity) ?? 0,
+                FavoritesCount = f.Book.FavoriteBooks.Count
+            })
+            .ToListAsync();
+    }
+
+    private async Task<List<OrderResponseDto>> BuildOrders(int userId)
+    {
+        return await _context.Orders
+            .Where(o => o.UserId == userId)
+            .OrderByDescending(o => o.Date)
+            .Select(o => new OrderResponseDto
+            {
+                Id = o.Id,
+                UserId = o.UserId,
+                Date = o.Date,
+                TotalPrice = o.TotalPrice,
+                DeliveryAddress = o.DeliveryAddress,
+                Items = o.Items.Select(i => new OrderHistoryItemDto
+                {
+                    BookId = i.BookId,
+                    Title = i.Book != null ? i.Book.Title : "",
+                    Author = i.Book != null ? i.Book.Author : "",
+                    ImageUrl = i.Book != null ? i.Book.ImageUrl : "",
+                    Quantity = i.Quantity,
+                    PriceAtMoment = i.PriceAtMoment
+                }).ToList()
+            })
+            .ToListAsync();
     }
 }

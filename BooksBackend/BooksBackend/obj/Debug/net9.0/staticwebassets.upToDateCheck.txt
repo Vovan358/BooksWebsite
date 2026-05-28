@@ -1,0 +1,4 @@
+wwwroot\images\1984.jpg
+wwwroot\images\harry-potter.jpg
+wwwroot\images\master-i-margarita.jpg
+wwwroot\images\prestuplenie-i-nakazanie.jpg

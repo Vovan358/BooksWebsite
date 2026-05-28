@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { getBooks } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { useProfile } from "../context/ProfileContext";
 
 function Header() {
   const [booksCount, setBooksCount] = useState(0);
@@ -11,6 +12,7 @@ function Header() {
   );
   const { totalCount } = useCart();
   const { user } = useAuth();
+  const { isAdmin } = useProfile();
 
   useEffect(() => {
     let ignore = false;
@@ -45,6 +47,11 @@ function Header() {
       <Link className="header-action header-action-left" data-cart-button to="/cart">
         Корзина ({totalCount})
       </Link>
+      {isAdmin && (
+        <Link className="header-action header-admin-link" to="/admin">
+          Админ-панель
+        </Link>
+      )}
 
       <div className="header-center">
         <h1>BooksWebsite</h1>

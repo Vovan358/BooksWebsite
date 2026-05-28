@@ -4,7 +4,7 @@ import AuthRedirectHandler from "./components/AuthRedirectHandler";
 import AuthModal from "./components/AuthModal";
 import Layout from "./components/Layout";
 import { useAuth } from "./context/AuthContext";
-import AdminPlaceholderPage from "./pages/AdminPlaceholderPage";
+import AdminPage from "./pages/AdminPage";
 import AuthPage from "./pages/AuthPage";
 import BookPage from "./pages/BookPage";
 import CartPage from "./pages/CartPage";
@@ -33,11 +33,11 @@ function App() {
           <Route path="/personal" element={<PersonalPage />} />
           <Route path="/users/:id" element={<UserPage />} />
           <Route element={<AdminGuard />}>
-            <Route path="/admin" element={<AdminPlaceholderPage />} />
-            <Route path="/admin/users" element={<AdminPlaceholderPage />} />
-            <Route path="/admin/orders" element={<AdminPlaceholderPage />} />
-            <Route path="/admin/comments" element={<AdminPlaceholderPage />} />
-            <Route path="/admin/books" element={<AdminPlaceholderPage />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin/users" element={<AdminPage />} />
+            <Route path="/admin/orders" element={<AdminPage />} />
+            <Route path="/admin/comments" element={<AdminPage />} />
+            <Route path="/admin/books" element={<AdminPage />} />
           </Route>
         </Route>
       </Routes>

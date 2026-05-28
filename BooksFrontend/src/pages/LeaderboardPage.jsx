@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getLeaderboard } from "../api/api";
 import PageSkeleton from "../components/PageSkeleton";
 import Pagination from "../components/Pagination";
@@ -104,7 +105,11 @@ function LeaderboardPage() {
               {(data?.rows || []).map((row) => (
                 <tr key={row.userId}>
                   <td>{row.rank}</td>
-                  <td>{row.username}</td>
+                  <td>
+                    <Link className="review-author-link" to={`/users/${row.userId}`}>
+                      {row.username}
+                    </Link>
+                  </td>
                   <td>
                     {row[valueKey]}
                     {sortBy === "moneySpent" ? " ₽" : ""}

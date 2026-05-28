@@ -31,4 +31,16 @@ public class UserProfileDto
     public bool ShowOrderHistory { get; set; }
 
     public bool ShowStats { get; set; }
+
+    public bool CanViewFavorites { get; set; }
+
+    public bool CanViewOrderHistory { get; set; }
+
+    public bool CanViewStats { get; set; }
+
+    public UserStatsDto? Stats { get; set; }
+
+    public List<BookResponseDto> FavoriteBooks { get; set; } = new();
+
+    public List<OrderResponseDto> Orders { get; set; } = new();
 }
